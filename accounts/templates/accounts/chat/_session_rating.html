@@ -1,0 +1,24 @@
+﻿{% if prompt %}
+<div class="chat-session-rating{% if prompt.rating %} chat-session-rating--done{% endif %}"
+     data-session-rating
+     {% if prompt.booking_id %}data-booking-id="{{ prompt.booking_id }}"{% endif %}>
+  {% if prompt.rating %}
+  <p class="chat-session-rating__label">Ваша оценка:</p>
+  <div class="chat-session-rating__stars chat-session-rating__stars--readonly" aria-label="{{ prompt.rating }} из 5">
+    {% for i in "12345" %}
+    <span class="chat-session-rating__star{% if forloop.counter <= prompt.rating %} chat-session-rating__star--filled{% endif %}" aria-hidden="true">★</span>
+    {% endfor %}
+  </div>
+  {% elif prompt.can_rate %}
+  <p class="chat-session-rating__label">Как прошло занятие?</p>
+  <div class="chat-session-rating__stars" role="radiogroup" aria-label="Оценка занятия">
+    {% for i in "12345" %}
+    <button type="button"
+            class="chat-session-rating__star"
+            data-rating="{{ forloop.counter }}"
+            aria-label="{{ forloop.counter }} из 5">★</button>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endif %}

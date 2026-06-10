@@ -1,0 +1,47 @@
+﻿<div class="education-picker" data-education-picker data-max-entries="20">
+  <div class="education-picker__rows">
+    {% for row in form.education_rows %}
+    <div class="mentor-anketa__row mentor-education-form-row" data-education-row>
+      <span class="mentor-anketa__label mentor-anketa__label--multiline">Учебное заведение</span>
+      <div class="education-picker__entry">
+        <div class="education-picker__head">
+          <input type="text" class="education-picker__institution mentor-anketa__input"
+                 name="{{ row.institution_field }}" value="{{ row.institution }}"
+                 placeholder="Название учебного заведения" maxlength="200">
+          <button type="button" class="education-picker__remove" aria-label="Удалить образование" title="Удалить">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <input type="number" class="education-picker__year mentor-anketa__input"
+               name="{{ row.graduation_year_field }}" value="{{ row.graduation_year }}"
+               placeholder="Год окончания" min="1950" max="2100" step="1"
+               aria-label="Год окончания">
+        <input type="text" class="education-picker__specialization mentor-anketa__input"
+               name="{{ row.specialization_field }}" value="{{ row.specialization }}"
+               placeholder="Специальность" maxlength="200">
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <button type="button" class="plasma-btn plasma-btn--secondary plasma-btn--s education-picker__add">Добавить образование</button>
+
+  <template class="education-picker__template">
+    <div class="mentor-anketa__row mentor-education-form-row" data-education-row>
+      <span class="mentor-anketa__label mentor-anketa__label--multiline">Учебное заведение</span>
+      <div class="education-picker__entry">
+        <div class="education-picker__head">
+          <input type="text" class="education-picker__institution mentor-anketa__input"
+                 placeholder="Название учебного заведения" maxlength="200">
+          <button type="button" class="education-picker__remove" aria-label="Удалить образование" title="Удалить">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <input type="number" class="education-picker__year mentor-anketa__input"
+               placeholder="Год окончания" min="1950" max="2100" step="1"
+               aria-label="Год окончания">
+        <input type="text" class="education-picker__specialization mentor-anketa__input"
+               placeholder="Специальность" maxlength="200">
+      </div>
+    </div>
+  </template>
+</div>

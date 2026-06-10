@@ -1,0 +1,56 @@
+﻿{% extends 'accounts/mentor/base.html' %}
+
+{% block mentor_title %}{{ mentee.display_name }}{% endblock %}
+
+{% block mentor_content %}
+<header class="mentor-profile-header">
+  <div class="mentor-profile-header__top">
+    <div class="mentor-profile-header__intro">
+      {% if mentee.photo %}
+      <img src="{{ mentee.photo.url }}" alt="{{ mentee.display_name }}" class="mentee-public__photo">
+      {% else %}
+      <div class="mentee-public__photo mentee-public__photo--placeholder">{{ mentee.initials }}</div>
+      {% endif %}
+      <h1 class="mentor-profile-header__name">{{ mentee.display_name }}</h1>
+      {% if mentee.level %}
+      <p class="mentee-public__level">{{ mentee.get_level_display }}</p>
+      {% endif %}
+    </div>
+  </div>
+  <hr class="mentor-profile-header__divider">
+</header>
+
+<div class="mentor-anketa mentor-anketa--readonly">
+  <div class="mentor-about-section">
+    <h2 class="mentor-section-title">Обучение</h2>
+    <div class="mentor-anketa__block">
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">О себе</span>
+        <div class="mentor-anketa__value-readonly mentor-anketa__bio">
+          {% if mentee.bio %}{{ mentee.bio|linebreaksbr }}{% else %}<span class="mentor-anketa__empty-value">—</span>{% endif %}
+        </div>
+      </div>
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">Цели обучения</span>
+        <div class="mentor-anketa__value-readonly mentor-anketa__bio">
+          {% if mentee.goals %}{{ mentee.goals|linebreaksbr }}{% else %}<span class="mentor-anketa__empty-value">—</span>{% endif %}
+        </div>
+      </div>
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">Интересы</span>
+        <div class="mentor-anketa__value-readonly">
+          {% if mentee.interests.all %}
+          <div class="mentor-skill-tags">
+            {% for interest in mentee.interests.all %}
+            <span class="mentor-skill-tag">{{ interest.name|upper }}</span>
+            {% endfor %}
+          </div>
+          {% else %}
+          <span class="mentor-anketa__empty-value">—</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

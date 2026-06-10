@@ -1,0 +1,16 @@
+﻿<header class="chat-layout__header chat-layout__header--thread">
+  <a href="{{ back_url }}" class="chat-layout__back">← Все чаты</a>
+  {% if profile_url %}
+  <a href="{{ profile_url }}" class="chat-layout__title chat-layout__title--link">{{ title }}</a>
+  {% else %}
+  <h2 class="chat-layout__title">{{ title }}</h2>
+  {% endif %}
+  <button type="button"
+          class="chat-layout__shared-toggle"
+          data-chat-shared-toggle
+          aria-label="Вложенные файлы"
+          aria-expanded="false"
+          title="Вложенные файлы">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+  </button>
+</header>

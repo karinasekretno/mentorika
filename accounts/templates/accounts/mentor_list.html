@@ -1,0 +1,214 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Менторы — Менторика{% endblock %}
+
+{% block body_class %}mentors-list-page{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/mentor-list.css' %}?v=22">
+{% endblock %}
+
+{% block content %}
+<section class="section" id="mentors">
+  <div class="container">
+    <div class="mentors-page">
+    <div class="mentors-page__head">
+      <div class="mentors-page__title-wrap">
+        <h1 class="mentors-page__title">Менторы</h1>
+        <span class="mentors-page__count">{{ mentor_count }}</span>
+      </div>
+      <div class="mentors-page__sort">
+        <span class="mentors-page__sort-label">Сначала:</span>
+        <select id="mentors-sort" class="mentors-page__sort-select" aria-label="Сортировка">
+          <option value="popular" {% if sort == 'popular' %}selected{% endif %}>Популярные</option>
+          <option value="rating" {% if sort == 'rating' %}selected{% endif %}>По рейтингу</option>
+          <option value="nearest" {% if sort == 'nearest' %}selected{% endif %}>По ближайшим записям</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mentors-page__layout">
+      <aside class="mentors-filter">
+        <h2 class="mentors-filter__title">
+          <svg class="mentors-filter__title-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+            <circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/>
+            <circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/>
+            <circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/>
+          </svg>
+          Фильтр
+        </h2>
+
+        <form method="get" id="mentors-filter-form" class="mentors-filter__form">
+          <input type="hidden" name="sort" value="{{ sort|default:'popular' }}">
+
+          <div class="mentors-filter__scroll">
+          <div class="mentors-filter__section">
+            <h3 class="mentors-filter__section-title">Направления</h3>
+            <div class="mentors-filter__search">
+              <svg class="mentors-filter__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input type="search" class="mentors-filter__search-input" data-skill-search placeholder="поиск" aria-label="Поиск направления">
+            </div>
+            {% if filter_skills %}
+            <div class="mentors-filter__tags mentors-filter__tags--collapsed" data-filter-tags>
+              {% for skill in filter_skills %}
+              <label class="mentors-filter__tag">
+                <input type="checkbox" name="skills" value="{{ skill }}"
+                       {% if skill in selected_skills %}checked{% endif %}>
+                <span>{{ skill }}</span>
+              </label>
+              {% endfor %}
+            </div>
+            {% if filter_skills|length > 8 %}
+            <button type="button" class="mentors-filter__expand" data-tags-expand aria-expanded="false">
+              <span data-tags-expand-label>Развернуть все направления</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            {% endif %}
+            {% else %}
+            <p class="mentors-filter__empty">Направления появятся, когда менторы заполнят анкеты.</p>
+            {% endif %}
+          </div>
+
+          <div class="mentors-filter__section">
+            <h3 class="mentors-filter__section-title">Рейтинг</h3>
+            <div class="mentors-filter__rating-range" data-rating-range>
+              <div class="mentors-filter__rating-summary">
+                <span>от <strong data-rating-min-label>{{ rating_min }}</strong></span>
+                <span>до <strong data-rating-max-label>{{ rating_max }}</strong></span>
+              </div>
+              <div class="mentors-filter__rating-track-wrap">
+                <div class="mentors-filter__rating-track" aria-hidden="true">
+                  <div class="mentors-filter__rating-fill" data-rating-fill></div>
+                </div>
+                <input type="range" name="min_rating" min="0" max="5" step="1"
+                       value="{{ rating_min }}" class="mentors-filter__rating-input mentors-filter__rating-input--min"
+                       data-rating-min aria-label="Минимальный рейтинг">
+                <input type="range" name="max_rating" min="0" max="5" step="1"
+                       value="{{ rating_max }}" class="mentors-filter__rating-input mentors-filter__rating-input--max"
+                       data-rating-max aria-label="Максимальный рейтинг">
+              </div>
+              <div class="mentors-filter__rating-ticks" aria-hidden="true">
+                <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mentors-filter__section">
+            <h3 class="mentors-filter__section-title">Имя и фамилия</h3>
+            <div class="mentors-filter__name-fields">
+              <div class="mentors-filter__box-field">
+                <label class="mentors-filter__box-label" for="id_first_name">Имя</label>
+                <input type="search" name="first_name" id="id_first_name" class="mentors-filter__box-input"
+                       value="{{ form.first_name.value|default:'' }}" placeholder="Иван" autocomplete="off">
+              </div>
+              <div class="mentors-filter__box-field">
+                <label class="mentors-filter__box-label" for="id_last_name">Фамилия</label>
+                <input type="search" name="last_name" id="id_last_name" class="mentors-filter__box-input"
+                       value="{{ form.last_name.value|default:'' }}" placeholder="Иванов" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="mentors-filter__actions">
+            <button type="submit" class="mentors-filter__submit">Применить</button>
+            <a href="{% url 'mentor_list' %}" class="mentors-filter__reset">Сбросить</a>
+          </div>
+        </form>
+      </aside>
+
+      <div class="mentors-catalog">
+        {% for mentor in mentors %}
+        <article class="mentor-catalog-card">
+          <div class="mentor-catalog-card__photo">
+            {% if mentor.photo %}
+            <img src="{{ mentor.photo.url }}" alt="{{ mentor.short_display_name }}">
+            {% else %}
+            <div class="mentor-catalog-card__photo-placeholder">{{ mentor.initials }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mentor-catalog-card__body">
+            <div class="mentor-catalog-card__top">
+              <h2 class="mentor-catalog-card__name">{{ mentor.short_display_name }}</h2>
+              <div class="mentor-catalog-card__rating-block">
+                {% if mentor.has_real_rating %}
+                <div class="mentor-catalog-card__stars" aria-label="Рейтинг {{ mentor.rating_display|floatformat:1 }} из 5">
+                  {% for state in mentor.star_states %}
+                  <span class="mentor-catalog-card__star mentor-catalog-card__star--{{ state }}" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </span>
+                  {% endfor %}
+                </div>
+                <span class="mentor-catalog-card__rating-value">{{ mentor.rating_display|floatformat:1 }}</span>
+                {% else %}
+                <span class="mentor-catalog-card__rating-value mentor-catalog-card__rating-value--empty">—</span>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if mentor.list_headline %}
+            <p class="mentor-catalog-card__headline">
+              <svg class="mentor-catalog-card__headline-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+              <span>{{ mentor.list_headline }}</span>
+            </p>
+            {% endif %}
+
+            {% if mentor.bio_display %}
+            <div class="mentor-catalog-card__bio-wrap">
+              <p class="mentor-catalog-card__bio mentor-catalog-card__bio--collapsed">{{ mentor.bio_display }}</p>
+              {% if mentor.bio_display|length > 180 %}
+              <button type="button" class="mentor-catalog-card__bio-toggle" data-bio-toggle>Развернуть полное описание</button>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            {% with skill_list=mentor.skills.all %}
+            {% if skill_list %}
+            <div class="mentor-catalog-card__skills">
+              {% for skill in skill_list|slice:":5" %}
+              <span class="mentor-catalog-card__skill">{{ skill.name }}</span>
+              {% endfor %}
+              {% if skill_list|length > 5 %}
+              <span class="mentor-catalog-card__skill mentor-catalog-card__skill--more">И ещё {{ skill_list|length|add:"-5" }}…</span>
+              {% endif %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <div class="mentor-catalog-card__footer">
+              {% if mentor.nearest_slots %}
+              <div class="mentor-catalog-card__slots">
+                <p class="mentor-catalog-card__slots-caption">
+                  Ближайшее время для записи <strong>{{ mentor.nearest_slots.date_label }}</strong>:
+                </p>
+                <div class="mentor-catalog-card__slots-chips" role="list" aria-label="Свободные слоты">
+                  {% for slot in mentor.nearest_slots.slots %}
+                  <a href="{% url 'mentor_detail' mentor.slug %}?date={{ slot.date }}&amp;slot={{ slot.id }}" class="mentor-catalog-card__slot-chip" role="listitem">{{ slot.time }}</a>
+                  {% endfor %}
+                </div>
+              </div>
+              {% else %}
+              <span class="mentor-catalog-card__slots mentor-catalog-card__slots--empty" aria-hidden="true"></span>
+              {% endif %}
+              <a href="{% url 'mentor_detail' mentor.slug %}" class="plasma-btn plasma-btn--primary plasma-btn--s mentor-catalog-card__cta">Выбрать ментора</a>
+            </div>
+          </div>
+        </article>
+        {% empty %}
+        <div class="mentors-catalog__empty">
+          <p class="text-body-l">Менторы не найдены. Попробуйте изменить фильтры.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/mentor-list.js' %}?v=9"></script>
+{% endblock %}

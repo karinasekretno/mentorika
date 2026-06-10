@@ -1,0 +1,159 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ mentor.display_name }} — Менторика{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/mentor-cabinet.css' %}?v=73">
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="mentor-public">
+      <a href="{% url 'mentor_list' %}" class="mentor-public__back">← К каталогу</a>
+
+      <div class="mentor-public__layout">
+        <aside class="mentor-public__photo-wrap">
+          <div class="mentor-public__photo">
+            {% if mentor.photo %}
+            <img src="{{ mentor.photo.url }}" alt="{{ mentor.display_name }}">
+            {% else %}
+            <div class="mentor-cabinet__photo-placeholder">{{ mentor.initials }}</div>
+            {% endif %}
+          </div>
+          <button type="button" class="plasma-btn plasma-btn--primary plasma-btn--m mentor-public__book-link" data-booking-open>Забронировать сессию</button>
+        </aside>
+
+        <div class="mentor-public__main">
+          <header class="mentor-profile-header">
+            <div class="mentor-profile-header__top">
+              <div class="mentor-profile-header__intro">
+                <h1 class="mentor-profile-header__name">{{ mentor.display_name }}</h1>
+                {% if mentor.headline %}
+                <p class="mentor-profile-header__headline">
+                  <span class="mentor-profile-header__headline-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+                  </span>
+                  <span class="mentor-profile-header__headline-text">{{ mentor.headline }}</span>
+                </p>
+                {% endif %}
+              </div>
+            </div>
+
+          </header>
+
+          <h2 class="mentor-section-title">Общая информация</h2>
+
+          {% include 'accounts/mentor/_profile_public_body.html' %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="booking-panel" id="booking-panel" hidden aria-hidden="true">
+  <div class="booking-panel__backdrop" data-booking-close tabindex="-1"></div>
+  <div class="booking-panel__sheet" role="dialog" aria-modal="true" aria-labelledby="booking-panel-title">
+    <header class="booking-panel__header">
+      <h2 class="booking-panel__title" id="booking-panel-title">Запись на сессию</h2>
+      <button type="button" class="booking-panel__close" data-booking-close aria-label="Закрыть">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </header>
+
+    <div class="booking-panel__body" data-booking-select>
+      <div class="booking-calendar">
+        <div class="booking-calendar__head">
+          <h3 class="booking-calendar__label">Расписание</h3>
+          <div class="booking-calendar__nav">
+            <button type="button" class="booking-calendar__nav-btn" data-cal-prev aria-label="Предыдущий месяц">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <span class="booking-calendar__month" data-cal-month-label></span>
+            <button type="button" class="booking-calendar__nav-btn" data-cal-next aria-label="Следующий месяц">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="booking-calendar__weekdays" aria-hidden="true">
+          <span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span><span>ПТ</span><span>СБ</span><span>ВС</span>
+        </div>
+        <div class="booking-calendar__grid" data-cal-grid role="grid" aria-label="Календарь"></div>
+        <p class="booking-calendar__hint">Доступные даты выделены — нажмите, чтобы выбрать время</p>
+      </div>
+
+      <aside class="booking-slots" data-slots-panel>
+        <div class="booking-slots__content" data-slots-content hidden>
+          <h3 class="booking-slots__title">Свободное время</h3>
+          <p class="booking-slots__date" data-slots-date></p>
+          <div class="booking-slots__list" data-slots-list role="list"></div>
+          <p class="booking-slots__empty" data-slots-empty hidden>На эту дату нет свободных слотов</p>
+          <button type="button" class="plasma-btn plasma-btn--primary plasma-btn--l booking-slots__submit" disabled data-booking-continue>Продолжить</button>
+          {% if not user.is_authenticated %}
+          <p class="booking-slots__login">
+            Для подтверждения записи потребуется <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">войти</a>
+            или <a href="{% url 'register' %}">зарегистрироваться</a>.
+          </p>
+          {% endif %}
+        </div>
+      </aside>
+    </div>
+
+    <div class="booking-panel__confirm" data-booking-confirm hidden>
+      <button type="button" class="booking-confirm__back" data-booking-back>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        Изменить время
+      </button>
+
+      <h3 class="booking-confirm__heading">Проверьте данные</h3>
+      <p class="booking-confirm__hint">Убедитесь, что всё верно, и подтвердите запись</p>
+
+      <div class="booking-confirm__card">
+        <div class="booking-confirm__row">
+          <span class="booking-confirm__label">Ментор</span>
+          <span class="booking-confirm__value">{{ mentor.display_name }}</span>
+        </div>
+        {% if mentor.list_headline %}
+        <div class="booking-confirm__row">
+          <span class="booking-confirm__label">Специализация</span>
+          <span class="booking-confirm__value booking-confirm__value--secondary">{{ mentor.list_headline }}</span>
+        </div>
+        {% endif %}
+        <div class="booking-confirm__row">
+          <span class="booking-confirm__label">Дата</span>
+          <span class="booking-confirm__value" data-confirm-date></span>
+        </div>
+        <div class="booking-confirm__row">
+          <span class="booking-confirm__label">Время</span>
+          <span class="booking-confirm__value" data-confirm-time></span>
+        </div>
+        <div class="booking-confirm__row">
+          <span class="booking-confirm__label">Формат</span>
+          <span class="booking-confirm__value booking-confirm__value--secondary">1 сессия · бесплатно</span>
+        </div>
+      </div>
+
+      {% if user.is_authenticated %}
+      <form method="post" action="{% url 'book_session' mentor.slug %}" class="booking-confirm__form" data-booking-form>
+        {% csrf_token %}
+        <input type="hidden" name="slot_id" value="" data-slot-input>
+        <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--l booking-confirm__submit">Подтвердить запись</button>
+      </form>
+      {% else %}
+      <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="plasma-btn plasma-btn--primary plasma-btn--l booking-confirm__submit">Войти и подтвердить</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.MENTOR_BOOKING = {
+    slotsUrl: '{% url "api_slots" mentor.slug %}',
+  };
+</script>
+<script src="{% static 'js/mentor-booking.js' %}?v=4"></script>
+{% endblock %}

@@ -1,0 +1,43 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Вход — Менторика{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width: 480px;">
+    <div class="plasma-card plasma-card--elevated">
+      <h1 class="text-h2" style="margin-bottom: var(--plasma-spacing-6);">Вход</h1>
+      <form method="post" class="cta-form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="plasma-textfield">
+          {{ field }}
+          <label class="plasma-textfield__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        </div>
+        {% if field.errors %}
+        <p class="text-caption" style="color: var(--plasma-colors-critical);">{{ field.errors.0 }}</p>
+        {% endif %}
+        {% endfor %}
+        <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--l" style="width: 100%;">
+          Войти
+        </button>
+      </form>
+      <p class="text-body-s text-secondary" style="margin-top: var(--plasma-spacing-4); text-align: center;">
+        <a href="{% url 'password_reset' %}" class="text-accent">Забыли пароль?</a>
+      </p>
+      <p class="text-body-s text-secondary" style="margin-top: var(--plasma-spacing-2); text-align: center;">
+        Нет аккаунта? <a href="{% url 'register' %}" class="text-accent">Зарегистрироваться</a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.plasma-textfield input').forEach(input => {
+  input.classList.add('plasma-textfield__input');
+  input.placeholder = ' ';
+});
+</script>
+{% endblock %}

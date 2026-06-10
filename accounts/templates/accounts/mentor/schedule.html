@@ -1,0 +1,206 @@
+﻿{% extends 'accounts/mentor/base.html' %}
+{% load static %}
+
+{% block mentor_title %}Расписание{% endblock %}
+
+{% block mentor_content %}
+<header class="mentor-profile-header">
+  <div class="mentor-profile-header__top">
+    <h1 class="mentor-profile-header__name">Расписание</h1>
+  </div>
+  <hr class="mentor-profile-header__divider">
+</header>
+
+<section class="mentor-dashboard-section mentor-dashboard-section--slot-add" id="slot-add-form">
+  <h2 class="mentor-section-title">Добавить слот</h2>
+
+  <div class="slot-form-panel">
+  <form method="post" class="slot-form" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <p class="slot-form__error slot-form__error--global">{{ form.non_field_errors.0 }}</p>
+    {% endif %}
+
+    <div class="slot-form__row">
+      <label class="slot-form__field slot-form__field--date">
+        <span class="slot-form__label">Дата</span>
+        {{ form.date }}
+        {% if form.date.errors %}<span class="slot-form__error">{{ form.date.errors.0 }}</span>{% endif %}
+      </label>
+
+      <label class="slot-form__field slot-form__field--time">
+        <span class="slot-form__label">{{ form.start_time.label }}</span>
+        {{ form.start_time }}
+        {% if form.start_time.errors %}<span class="slot-form__error">{{ form.start_time.errors.0 }}</span>{% endif %}
+      </label>
+
+      <label class="slot-form__field slot-form__field--time">
+        <span class="slot-form__label">{{ form.end_time.label }}</span>
+        {{ form.end_time }}
+        {% if form.end_time.errors %}<span class="slot-form__error">{{ form.end_time.errors.0 }}</span>{% endif %}
+      </label>
+
+      <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--m slot-form__submit">
+        Добавить
+      </button>
+    </div>
+  </form>
+  </div>
+</section>
+
+<section class="mentor-dashboard-section">
+  <div class="mentor-section-head">
+    <hr class="mentor-section-divider">
+    <h2 class="mentor-section-title">Текущие слоты</h2>
+  </div>
+
+  <div class="schedule-calendar-wrap">
+    <div class="booking-calendar schedule-calendar" data-schedule-calendar>
+      <div class="booking-calendar__head">
+        <h3 class="booking-calendar__label">Календарь</h3>
+        <div class="booking-calendar__nav">
+          <button type="button" class="booking-calendar__nav-btn" data-cal-prev aria-label="Предыдущий месяц">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <span class="booking-calendar__month" data-cal-month-label></span>
+          <button type="button" class="booking-calendar__nav-btn" data-cal-next aria-label="Следующий месяц">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="booking-calendar__weekdays" aria-hidden="true">
+        <span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span><span>ПТ</span><span>СБ</span><span>ВС</span>
+      </div>
+      <div class="booking-calendar__grid" data-cal-grid role="grid" aria-label="Календарь слотов"></div>
+      <p class="booking-calendar__hint">Нажмите на дату, чтобы посмотреть слоты. Дни со слотами выделены.</p>
+    </div>
+
+    <div class="schedule-day-slots" data-schedule-day-slots hidden>
+      <h3 class="schedule-day-slots__title">Слоты на <span data-schedule-day-label></span></h3>
+      <ul class="mentor-dashboard-sessions mentor-dashboard-sessions--grid" data-schedule-day-list hidden></ul>
+      <div class="mentor-dashboard-empty schedule-day-slots__empty-panel" data-schedule-day-empty hidden>
+        <p class="mentor-dashboard-empty__text">На этот день слотов нет</p>
+        <button type="button" class="plasma-btn plasma-btn--primary plasma-btn--s" data-schedule-add-slot>
+          Добавить слот
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="attendance-modal" id="reschedule-booking-modal" hidden aria-hidden="true">
+  <div class="attendance-modal__backdrop" data-reschedule-close tabindex="-1"></div>
+  <div class="attendance-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="reschedule-booking-modal-title">
+    <header class="attendance-modal__header">
+      <h3 class="attendance-modal__title" id="reschedule-booking-modal-title">Изменить время</h3>
+      <button type="button" class="attendance-modal__close" data-reschedule-close aria-label="Закрыть">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </header>
+
+    <div class="attendance-modal__card">
+      <p class="attendance-modal__text" data-reschedule-text></p>
+    </div>
+
+    <form method="post" action="" class="reschedule-modal__form" data-reschedule-form>
+      {% csrf_token %}
+      <input type="hidden" name="action" value="reschedule">
+      <input type="hidden" name="next" value="{% url 'mentor_schedule' %}">
+      <div class="reschedule-modal__fields">
+        <label class="reschedule-modal__field">
+          <span class="reschedule-modal__label">Дата</span>
+          <input type="date" name="date" class="reschedule-modal__input" data-reschedule-date required>
+        </label>
+        <label class="reschedule-modal__field">
+          <span class="reschedule-modal__label">Начало</span>
+          <input type="time" name="start_time" class="reschedule-modal__input" data-reschedule-start required>
+        </label>
+        <label class="reschedule-modal__field">
+          <span class="reschedule-modal__label">Окончание</span>
+          <input type="time" name="end_time" class="reschedule-modal__input" data-reschedule-end required>
+        </label>
+      </div>
+      <div class="attendance-modal__actions">
+        <button type="button" class="plasma-btn plasma-btn--secondary plasma-btn--m attendance-modal__btn" data-reschedule-close>Отмена</button>
+        <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--m attendance-modal__btn">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="attendance-modal" id="mentor-cancel-booking-modal" hidden aria-hidden="true">
+  <div class="attendance-modal__backdrop" data-mentor-cancel-close tabindex="-1"></div>
+  <div class="attendance-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="mentor-cancel-booking-modal-title">
+    <header class="attendance-modal__header">
+      <h3 class="attendance-modal__title" id="mentor-cancel-booking-modal-title">Отмена записи</h3>
+      <button type="button" class="attendance-modal__close" data-mentor-cancel-close aria-label="Закрыть">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </header>
+
+    <div class="attendance-modal__card">
+      <p class="attendance-modal__text" data-mentor-cancel-text></p>
+    </div>
+    <p class="attendance-modal__hint">Запись будет отменена, а слот снова станет доступен для других.</p>
+
+    <form method="post" action="" class="attendance-modal__actions" data-mentor-cancel-form>
+      {% csrf_token %}
+      <input type="hidden" name="action" value="cancel">
+      <input type="hidden" name="next" value="{% url 'mentor_schedule' %}">
+      <button type="button" class="plasma-btn plasma-btn--secondary plasma-btn--m attendance-modal__btn" data-mentor-cancel-close>Оставить запись</button>
+      <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--m attendance-modal__btn">Отменить запись</button>
+    </form>
+  </div>
+</div>
+
+<div class="attendance-modal" id="edit-slot-modal" hidden aria-hidden="true">
+  <div class="attendance-modal__backdrop" data-slot-edit-close tabindex="-1"></div>
+  <div class="attendance-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="edit-slot-modal-title">
+    <header class="attendance-modal__header">
+      <h3 class="attendance-modal__title" id="edit-slot-modal-title">Изменить слот</h3>
+      <button type="button" class="attendance-modal__close" data-slot-edit-close aria-label="Закрыть">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </header>
+
+    <form method="post" action="" class="reschedule-modal__form" data-slot-edit-form>
+      {% csrf_token %}
+      <div class="reschedule-modal__fields">
+        <label class="reschedule-modal__field">
+          <span class="reschedule-modal__label">Дата</span>
+          <input type="date" name="date" class="reschedule-modal__input" data-slot-edit-date required>
+        </label>
+        <label class="reschedule-modal__field">
+          <span class="reschedule-modal__label">Начало</span>
+          <input type="time" name="start_time" class="reschedule-modal__input" data-slot-edit-start required>
+        </label>
+        <label class="reschedule-modal__field">
+          <span class="reschedule-modal__label">Окончание</span>
+          <input type="time" name="end_time" class="reschedule-modal__input" data-slot-edit-end required>
+        </label>
+      </div>
+      <div class="attendance-modal__actions">
+        <button type="button" class="plasma-btn plasma-btn--secondary plasma-btn--m attendance-modal__btn" data-slot-edit-close>Отмена</button>
+        <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--m attendance-modal__btn">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+window.MENTOR_SCHEDULE = {
+  slotsUrl: '{% url "mentor_schedule_api" %}',
+  editSlotUrl: (id) => '{% url "edit_slot" 0 %}'.replace('/0/', `/${id}/`),
+  deleteSlotUrl: (id) => '{% url "delete_slot" 0 %}'.replace('/0/', `/${id}/`),
+  csrfToken: '{{ csrf_token }}',
+};
+</script>
+<script>
+  window.MENTOR_BOOKING_MANAGE_URL = '{% url "mentor_booking_manage" 0 %}'.replace('/0/', '/{id}/');
+</script>
+<script src="{% static 'js/mentor-booking-manage.js' %}?v=2"></script>
+<script src="{% static 'js/mentor-schedule-calendar.js' %}?v=8"></script>
+{% endblock %}

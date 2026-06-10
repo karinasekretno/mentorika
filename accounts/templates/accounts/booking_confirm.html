@@ -1,0 +1,42 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Бронирование подтверждено — Менторика{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width: 560px;">
+    <div class="plasma-card plasma-card--elevated" style="text-align: center;">
+      <div style="font-size: 48px; margin-bottom: var(--plasma-spacing-4);">✓</div>
+      <h1 class="text-h2" style="margin-bottom: var(--plasma-spacing-4);">Сессия забронирована!</h1>
+      <p class="text-body-l text-secondary" style="margin-bottom: var(--plasma-spacing-8);">
+        {% if booking.mentee == user %}
+        Встреча с {{ booking.mentor.display_name }} подтверждена. Ментор получил уведомление.
+        {% else %}
+        Новая встреча с {{ booking.mentee.get_full_name|default:booking.mentee.username }}.
+        {% endif %}
+      </p>
+
+      <div class="plasma-card plasma-card--surface" style="text-align: left; margin-bottom: var(--plasma-spacing-8);">
+        <p class="text-body-s text-secondary">Дата и время</p>
+        <p class="text-body-l" style="font-weight: 600; margin-bottom: var(--plasma-spacing-4);">
+          {{ booking.slot.date|date:"l, d E Y" }}, {{ booking.slot.start_time|time:"H:i" }}–{{ booking.slot.end_time|time:"H:i" }}
+        </p>
+        <p class="text-body-s text-secondary">Ментор</p>
+        <p class="text-body-m" style="font-weight: 600; margin-bottom: var(--plasma-spacing-4);">{{ booking.mentor.display_name }}</p>
+        <p class="text-body-s text-secondary">Ученик</p>
+        <p class="text-body-m" style="font-weight: 600;">{{ booking.mentee.get_full_name|default:booking.mentee.username }}</p>
+      </div>
+
+      {% if booking.mentee == user %}
+      <a href="{% if conversation %}{% url 'mentee_chat_detail' conversation.pk %}{% else %}{% url 'mentee_cabinet' %}{% endif %}" class="plasma-btn plasma-btn--primary plasma-btn--l" style="width: 100%;">
+        {% if conversation %}Перейти в чат{% else %}В личный кабинет{% endif %}
+      </a>
+      {% else %}
+      <a href="{% if conversation %}{% url 'mentor_chat_detail' conversation.pk %}{% else %}{% url 'mentor_cabinet' %}{% endif %}" class="plasma-btn plasma-btn--primary plasma-btn--l" style="width: 100%;">
+        {% if conversation %}Перейти в чат{% else %}В кабинет{% endif %}
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

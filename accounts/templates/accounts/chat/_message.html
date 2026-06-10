@@ -1,0 +1,37 @@
+﻿{% load chat_extras %}
+<div class="chat-message{% if msg.is_system %} chat-message--system{% elif msg.sender_id == user.id %} chat-message--own{% else %} chat-message--other{% endif %}"
+     data-message-id="{{ msg.pk }}"
+     {% if not msg.is_system %}
+     data-context-menu="1"
+     data-can-delete="{% if msg.sender_id == user.id %}1{% else %}0{% endif %}"
+     data-sender-name="{% if msg.sender_id == user.id %}Вы{% else %}{{ msg.sender.get_full_name|default:msg.sender.username }}{% endif %}"
+     data-message-preview="{% if msg.text %}{{ msg.text|truncatechars:120 }}{% elif msg.attachments.all %}{{ msg.attachments.all.0.name }}{% else %}Вложение{% endif %}"
+     {% endif %}>
+  {% if msg.is_system %}
+  <div class="chat-message__bubble chat-message__bubble--system{% if msg.system_variant == 'started' %} chat-message__bubble--system-started{% elif msg.system_variant == 'completed' %} chat-message__bubble--system-completed{% elif msg.system_variant == 'cancelled' %} chat-message__bubble--system-cancelled{% endif %}">
+    <span class="chat-message__system-icon" aria-hidden="true">{% if msg.system_variant == 'started' %}▶{% elif msg.system_variant == 'completed' %}✓{% elif msg.system_variant == 'cancelled' %}✕{% else %}📅{% endif %}</span>
+    {{ msg.text }}
+  </div>
+  {% if msg.system_variant == 'completed' %}
+  {% session_rating_prompt msg user as prompt %}
+  {% include 'accounts/chat/_session_rating.html' with prompt=prompt %}
+  {% endif %}
+  {% else %}
+  <div class="chat-message__bubble">
+    {% if msg.reply_to %}
+    {% include 'accounts/chat/_reply.html' with reply=msg.reply_to user=user %}
+    {% endif %}
+    {% if msg.attachments.all %}
+    <div class="chat-message__attachments">
+      {% for attachment in msg.attachments.all %}
+      {% include 'accounts/chat/_attachment.html' with attachment=attachment conversation=conversation %}
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if msg.text %}
+    <p class="chat-message__text">{{ msg.text|linebreaksbr }}</p>
+    {% endif %}
+    <time class="chat-message__time" datetime="{{ msg.created_at|date:'c' }}"></time>
+  </div>
+  {% endif %}
+</div>

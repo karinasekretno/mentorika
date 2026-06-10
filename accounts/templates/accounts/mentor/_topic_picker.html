@@ -1,0 +1,25 @@
+﻿<div class="topic-picker" data-topic-picker data-max-topics="20">
+  <div class="topic-picker__rows">
+    {% for row in form.topic_rows %}
+    <div class="topic-picker__row" data-topic-row>
+      <textarea class="topic-picker__text mentor-anketa__textarea"
+                name="{{ row.field }}" rows="2"
+                placeholder="Опишите запрос, с которым вы работаете">{{ row.text }}</textarea>
+      <button type="button" class="topic-picker__remove" aria-label="Удалить запрос" title="Удалить">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+  <button type="button" class="plasma-btn plasma-btn--secondary plasma-btn--s topic-picker__add">Добавить запрос</button>
+
+  <template class="topic-picker__template">
+    <div class="topic-picker__row" data-topic-row>
+      <textarea class="topic-picker__text mentor-anketa__textarea" rows="2"
+                placeholder="Опишите запрос, с которым вы работаете"></textarea>
+      <button type="button" class="topic-picker__remove" aria-label="Удалить запрос" title="Удалить">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </template>
+</div>

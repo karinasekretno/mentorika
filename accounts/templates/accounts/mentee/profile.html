@@ -1,0 +1,156 @@
+﻿{% extends 'accounts/mentee/base.html' %}
+{% load static %}
+
+{% block mentee_title %}Профиль{% endblock %}
+
+{% block mentee_content %}
+<header class="mentor-profile-header">
+  <div class="mentor-profile-header__top">
+    <div class="mentor-profile-header__intro">
+      <h1 class="mentor-profile-header__name">
+        {{ user.first_name|default:'' }}{% if user.last_name %} {{ user.last_name|slice:":1" }}.{% endif %}
+      </h1>
+    </div>
+    {% if not editing %}
+    <a href="{% url 'mentee_profile' %}?edit=1" class="plasma-btn plasma-btn--secondary plasma-btn--s mentor-profile-header__edit-btn">Редактировать профиль</a>
+    {% endif %}
+  </div>
+
+  <hr class="mentor-profile-header__divider">
+</header>
+
+<h2 class="mentor-section-title">Общая информация</h2>
+
+{% if editing %}
+<form method="post" class="mentor-anketa">
+  {% csrf_token %}
+
+  <div class="mentor-anketa__block">
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">Имя</span>
+      <div>
+        <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" class="mentor-anketa__input" maxlength="150" required>
+        {% if form.first_name.errors %}<p class="mentor-anketa__error">{{ form.first_name.errors.0 }}</p>{% endif %}
+      </div>
+    </div>
+
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">Фамилия</span>
+      <div>
+        <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" class="mentor-anketa__input" maxlength="150">
+        {% if form.last_name.errors %}<p class="mentor-anketa__error">{{ form.last_name.errors.0 }}</p>{% endif %}
+      </div>
+    </div>
+
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">Почта</span>
+      <div class="mentor-anketa__value-readonly">{{ user.email }}</div>
+    </div>
+  </div>
+
+  <div class="mentor-about-section">
+    <div class="mentor-about-intro">
+      <div class="mentor-section-head">
+        <hr class="mentor-section-divider">
+      </div>
+      <h2 class="mentor-section-title">Обучение</h2>
+    </div>
+
+    <div class="mentor-anketa__block">
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">О себе</span>
+        <div>
+          {{ form.bio }}
+          {% if form.bio.errors %}<p class="mentor-anketa__error">{{ form.bio.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">Цели обучения</span>
+        <div>
+          {{ form.goals }}
+          {% if form.goals.errors %}<p class="mentor-anketa__error">{{ form.goals.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">Интересы</span>
+        <div>
+          {% include 'accounts/mentee/_interest_picker.html' %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mentor-anketa__actions">
+    <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--m">Сохранить</button>
+    <a href="{% url 'mentee_profile' %}" class="plasma-btn plasma-btn--secondary plasma-btn--m">Отмена</a>
+  </div>
+</form>
+{% else %}
+<div class="mentor-anketa mentor-anketa--readonly">
+  <div class="mentor-anketa__block">
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">Имя</span>
+      <div class="mentor-anketa__value-readonly">{{ user.first_name|default:"—" }}</div>
+    </div>
+
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">Фамилия</span>
+      <div class="mentor-anketa__value-readonly">{{ user.last_name|default:"—" }}</div>
+    </div>
+
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">Почта</span>
+      <div class="mentor-anketa__value-readonly">{{ user.email }}</div>
+    </div>
+  </div>
+
+  <div class="mentor-about-section">
+    <div class="mentor-about-intro">
+      <div class="mentor-section-head">
+        <hr class="mentor-section-divider">
+      </div>
+      <h2 class="mentor-section-title">Обучение</h2>
+    </div>
+
+    <div class="mentor-anketa__block">
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">О себе</span>
+        <div class="mentor-anketa__value-readonly mentor-anketa__bio">
+          {% if mentee.bio %}{{ mentee.bio|linebreaksbr }}{% else %}<span class="mentor-anketa__empty-value">—</span>{% endif %}
+        </div>
+      </div>
+
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">Цели обучения</span>
+        <div class="mentor-anketa__value-readonly mentor-anketa__bio">
+          {% if mentee.goals %}{{ mentee.goals|linebreaksbr }}{% else %}<span class="mentor-anketa__empty-value">—</span>{% endif %}
+        </div>
+      </div>
+
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">Интересы</span>
+        <div class="mentor-anketa__value-readonly">
+          {% if mentee.interests.all %}
+          <div class="mentor-skill-tags">
+            {% for interest in mentee.interests.all %}
+            <span class="mentor-skill-tag">{{ interest.name|upper }}</span>
+            {% endfor %}
+          </div>
+          {% else %}
+          <span class="mentor-anketa__empty-value">—</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if editing %}
+<script src="{% static 'js/interest-picker.js' %}"></script>
+{% endif %}
+{% endblock %}

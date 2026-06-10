@@ -1,0 +1,4 @@
+﻿<div class="chat-message__reply">
+  <span class="chat-message__reply-author">{% if reply.sender_id == user.id %}Вы{% else %}{{ reply.sender.get_full_name|default:reply.sender.username }}{% endif %}</span>
+  <span class="chat-message__reply-text">{% if reply.text %}{{ reply.text|truncatechars:120 }}{% elif reply.attachments.all %}{{ reply.attachments.all.0.name }}{% else %}Вложение{% endif %}</span>
+</div>

@@ -1,0 +1,58 @@
+﻿<div class="chat-list-wrap">
+  <label class="chat-list__search-wrap">
+    <svg class="chat-list__search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="search" class="chat-list__search" placeholder="Поиск" data-chat-search autocomplete="off" aria-label="Поиск по имени">
+  </label>
+
+  <div class="chat-list-panel">
+    {% if conversations %}
+    <ul class="chat-list" data-chat-list>
+      {% for conversation in conversations %}
+      <li data-chat-item>
+        <a href="{% if role == 'mentor' %}{% url 'mentor_chat_detail' conversation.pk %}{% else %}{% url 'mentee_chat_detail' conversation.pk %}{% endif %}"
+           class="chat-list__item{% if active_conversation_id == conversation.pk %} chat-list__item--active{% endif %}"
+           data-search-name="{% if role == 'mentor' %}{{ conversation.other_party_for_mentor }}{% else %}{{ conversation.other_party_for_mentee }}{% endif %}">
+          {% if role == 'mentor' %}
+          {% if conversation.mentee.mentee_profile %}
+          {% include 'accounts/chat/_avatar.html' with photo=conversation.mentee.mentee_profile.photo initials=conversation.mentee.mentee_profile.initials %}
+          {% else %}
+          {% include 'accounts/chat/_avatar.html' with photo='' initials=conversation.mentee.first_name|slice:":1"|default:conversation.mentee.username|slice:":1"|upper %}
+          {% endif %}
+          {% else %}
+          {% include 'accounts/chat/_avatar.html' with photo=conversation.mentor.photo initials=conversation.mentor.initials %}
+          {% endif %}
+          <span class="chat-list__body">
+            <span class="chat-list__top">
+              <span class="chat-list__name">
+                {% if role == 'mentor' %}{{ conversation.other_party_for_mentor }}{% else %}{{ conversation.other_party_for_mentee }}{% endif %}
+              </span>
+              <span class="chat-list__time" data-datetime="{{ conversation.updated_at|date:'c' }}"></span>
+            </span>
+            <span class="chat-list__preview">
+              {% if conversation.latest_messages %}
+                {% with msg=conversation.latest_messages.0 %}
+                  {% if msg.is_system %}
+                    📅 {{ msg.text|truncatechars:80 }}
+                  {% elif msg.text %}
+                    {{ msg.text|truncatechars:80 }}
+                  {% elif msg.attachments.all %}
+                    📎 {% if msg.attachments.all|length > 1 %}{{ msg.attachments.all|length }} файла{% else %}{{ msg.attachments.all.0.name|truncatechars:60 }}{% endif %}
+                  {% endif %}
+                {% endwith %}
+              {% else %}
+                Нет сообщений
+              {% endif %}
+            </span>
+          </span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="chat-list__search-empty" data-chat-search-empty hidden>Никого не найдено</p>
+    {% else %}
+    <div class="mentor-dashboard-empty chat-list-panel__empty">
+      <p class="mentor-dashboard-empty__text">Пока нет диалогов. Они появятся после первой записи на сессию.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>

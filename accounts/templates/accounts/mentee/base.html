@@ -1,0 +1,48 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% block mentee_title %}Кабинет менти{% endblock %} — Менторика{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/mentor-cabinet.css' %}?v=68">
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="mentor-cabinet">
+      <aside class="mentor-cabinet__sidebar">
+        <div class="mentor-cabinet__photo-wrap">
+          <form method="post" action="{% url 'mentee_photo_upload' %}" enctype="multipart/form-data" class="mentor-cabinet__photo-form">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.resolver_match.url_name }}">
+            <label class="mentor-cabinet__photo" title="Нажмите, чтобы загрузить фото">
+              {% if mentee.photo %}
+              <img src="{{ mentee.photo.url }}" alt="{{ mentee.display_name }}">
+              {% else %}
+              <div class="mentor-cabinet__photo-placeholder mentor-cabinet__photo-placeholder--mentee">{{ mentee.initials }}</div>
+              {% endif %}
+              <span class="mentor-cabinet__photo-hint">Загрузить фото</span>
+              <input type="file" name="photo" accept="image/*" class="mentor-cabinet__photo-input" onchange="this.form.submit()">
+            </label>
+          </form>
+        </div>
+
+        <nav class="mentor-cabinet__nav" aria-label="Меню кабинета">
+          <a href="{% url 'mentee_cabinet' %}" class="mentor-cabinet__nav-link{% if active_nav == 'cabinet' %} mentor-cabinet__nav-link--active{% endif %}">Кабинет</a>
+          <a href="{% url 'mentee_profile' %}" class="mentor-cabinet__nav-link{% if active_nav == 'profile' %} mentor-cabinet__nav-link--active{% endif %}">Профиль</a>
+          <a href="{% url 'mentee_chats' %}" class="mentor-cabinet__nav-link{% if active_nav == 'chats' %} mentor-cabinet__nav-link--active{% endif %}">Чаты</a>
+        </nav>
+
+        <a href="{% url 'mentor_list' %}" class="plasma-btn plasma-btn--primary plasma-btn--s mentor-cabinet__sidebar-cta">Найти ментора</a>
+      </aside>
+
+      <div class="mentor-cabinet__main">
+        {% block mentee_content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

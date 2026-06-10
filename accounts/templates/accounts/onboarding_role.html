@@ -1,0 +1,30 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Выбор роли — Менторика{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width: 560px;">
+    <div class="plasma-card plasma-card--elevated">
+      <h1 class="text-h2" style="margin-bottom: var(--plasma-spacing-4);">Кем вы себя видите на платформе?</h1>
+      <p class="text-body-m text-secondary" style="margin-bottom: var(--plasma-spacing-8);">
+        Это поможет настроить ваш профиль и рекомендации.
+      </p>
+      <form method="post">
+        {% csrf_token %}
+        <div style="display: flex; flex-direction: column; gap: var(--plasma-spacing-4); margin-bottom: var(--plasma-spacing-8);">
+          {% for radio in form.role %}
+          <label class="plasma-card plasma-card--surface plasma-card--horizontal" style="cursor: pointer; padding: var(--plasma-spacing-5);">
+            {{ radio.tag }}
+            <span class="text-body-m" style="font-weight: 500; margin-left: var(--plasma-spacing-3);">{{ radio.choice_label }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--l" style="width: 100%;">
+          Продолжить
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

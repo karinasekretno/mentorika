@@ -1,0 +1,67 @@
+﻿<header class="plasma-header">
+  <div class="plasma-header__inner">
+    <a href="{% url 'index' %}" class="plasma-header__logo">
+      <div class="plasma-header__logo-icon">М</div>
+      Менторика
+    </a>
+
+    <nav class="plasma-header__nav">
+      <a href="{% url 'index' %}#features">Возможности</a>
+      <a href="{% url 'mentor_list' %}">Менторы</a>
+      <a href="{% url 'index' %}#how">Как это работает</a>
+      <a href="{% url 'index' %}#pricing">Тарифы</a>
+    </nav>
+
+    <div class="plasma-header__actions">
+      <div class="theme-panel">
+        <div class="plasma-switch" id="dark-mode-switch" role="switch" aria-label="Тёмная тема">
+          <div class="plasma-switch__track"></div>
+          <div class="plasma-switch__thumb"></div>
+        </div>
+      </div>
+      {% if user.is_authenticated %}
+        <div class="notifications-wrap" data-notifications>
+          <button
+            type="button"
+            class="notifications-bell"
+            data-notifications-toggle
+            aria-label="Уведомления"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5"/>
+              <path d="M10 20a2 2 0 0 0 4 0"/>
+            </svg>
+            <span class="notifications-bell__badge" data-notifications-badge {% if not notification_unread_count %}hidden{% endif %}>
+              {% if notification_unread_count %}{{ notification_unread_count }}{% endif %}
+            </span>
+          </button>
+          <div class="notifications-panel" data-notifications-panel hidden>
+            <div class="notifications-panel__header">
+              <span class="notifications-panel__title">Уведомления</span>
+              <button type="button" class="notifications-panel__mark-all" data-notifications-mark-all>
+                Прочитать все
+              </button>
+            </div>
+            <div class="notifications-panel__list" data-notifications-list>
+              <div class="notifications-panel__loading">Загрузка...</div>
+            </div>
+          </div>
+        </div>
+        {% if user.profile.role == 'mentor' %}
+        <a href="{% url 'mentor_cabinet' %}" class="plasma-btn plasma-btn--clear plasma-btn--s">Кабинет</a>
+        {% else %}
+        <a href="{% url 'mentee_cabinet' %}" class="plasma-btn plasma-btn--clear plasma-btn--s">Кабинет</a>
+        {% endif %}
+        <a href="{% url 'logout' %}" class="plasma-btn plasma-btn--secondary plasma-btn--s">Выйти</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="plasma-btn plasma-btn--clear plasma-btn--s">Войти</a>
+        <a href="{% url 'register' %}" class="plasma-btn plasma-btn--primary plasma-btn--s">Зарегистрироваться</a>
+      {% endif %}
+      <button class="mobile-menu-btn" aria-label="Меню">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,69 @@
+﻿<div class="skill-picker" data-skill-picker data-max-custom="10">
+  <button type="button" class="skill-picker__trigger" aria-expanded="false" aria-haspopup="listbox">
+    <span class="skill-picker__trigger-text">Выберите скиллы</span>
+    <svg class="skill-picker__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+
+  <div class="skill-picker__dropdown" hidden>
+    <input type="search" class="skill-picker__search" placeholder="Начните вводить навык..." autocomplete="off">
+    <ul class="skill-picker__list" role="listbox">
+      {% for row in form.skill_rows %}
+      <li class="skill-picker__item" data-label="{{ row.label|lower }}">
+        <label class="skill-picker__option">
+          <input type="checkbox" name="skills" value="{{ row.value }}" data-skill-name="{{ row.value }}"
+                 {% if row.checked %}checked{% endif %}>
+          <span>{{ row.label }}</span>
+        </label>
+        <select class="skill-picker__level mentor-select mentor-select--s"
+                name="{{ row.level_field }}" data-skill-level-for="{{ row.value }}"
+                {% if row.level_disabled %}disabled{% endif %}>
+          {% for level_value, level_label in form.skill_level_choices %}
+          <option value="{{ level_value }}" {% if row.level == level_value %}selected{% endif %}>{{ level_label }}</option>
+          {% endfor %}
+        </select>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="skill-picker__empty" hidden>Ничего не найдено</p>
+  </div>
+
+  <div class="skill-picker__custom">
+    <div class="skill-picker__custom-rows">
+      {% for row in form.custom_skill_rows %}
+      <div class="skill-picker__custom-row" data-custom-row>
+        <input type="text" class="skill-picker__custom-name mentor-anketa__input"
+               name="{{ row.name_field }}" value="{{ row.name }}"
+               placeholder="Название навыка" maxlength="80">
+        <select class="skill-picker__custom-level mentor-select"
+                name="{{ row.level_field }}">
+          {% for level_value, level_label in form.skill_level_choices %}
+          <option value="{{ level_value }}" {% if row.level == level_value %}selected{% endif %}>{{ level_label }}</option>
+          {% endfor %}
+        </select>
+        <button type="button" class="skill-picker__custom-remove" aria-label="Удалить навык" title="Удалить">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+    <button type="button" class="plasma-btn plasma-btn--secondary plasma-btn--s skill-picker__add-custom">Другой скилл</button>
+  </div>
+
+  <template class="skill-picker__custom-template">
+    <div class="skill-picker__custom-row" data-custom-row>
+      <input type="text" class="skill-picker__custom-name mentor-anketa__input"
+             placeholder="Название навыка" maxlength="80">
+      <select class="skill-picker__custom-level mentor-select">
+        {% for level_value, level_label in form.skill_level_choices %}
+        <option value="{{ level_value }}"{% if level_value == 'middle' %} selected{% endif %}>{{ level_label }}</option>
+        {% endfor %}
+      </select>
+      <button type="button" class="skill-picker__custom-remove" aria-label="Удалить навык" title="Удалить">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </template>
+
+  <div class="mentor-skill-tags skill-picker__tags" aria-live="polite"></div>
+  {% if form.skills.errors %}<p class="mentor-anketa__error">{{ form.skills.errors.0 }}</p>{% endif %}
+</div>

@@ -1,0 +1,50 @@
+﻿{% extends 'accounts/mentor/base.html' %}
+
+
+
+{% block body_class %}chat-thread-page{% endblock %}
+
+
+
+{% block mentor_title %}Чат{% endblock %}
+
+
+
+{% block mentor_content %}
+
+{% url 'mentor_chats' as mentor_chats_url %}
+
+<div class="chat-layout chat-layout--thread-only" data-chat-layout data-shared-url="{% url 'chat_shared_api' conversation.pk %}">
+
+  <section class="chat-layout__main">
+
+    {% url 'mentee_detail' conversation.mentee_id as mentee_profile_url %}
+    {% include 'accounts/chat/_header.html' with back_url=mentor_chats_url title=conversation.other_party_for_mentor profile_url=mentee_profile_url %}
+
+    {% include 'accounts/chat/_shared_panel.html' %}
+
+    {% include 'accounts/chat/_thread.html' %}
+
+  </section>
+
+</div>
+
+{% endblock %}
+
+
+
+{% block footer %}{% endblock %}
+
+
+
+{% block extra_js %}
+
+{% load static %}
+
+<script src="{% static 'js/chat-datetime.js' %}?v=1"></script>
+<script src="{% static 'js/chat-thread.js' %}?v=13"></script>
+
+<script src="{% static 'js/chat-shared.js' %}?v=1"></script>
+
+{% endblock %}
+

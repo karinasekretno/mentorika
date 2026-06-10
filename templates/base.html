@@ -1,0 +1,51 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="ru" data-theme="eva" data-color-scheme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Менторика{% endblock %}</title>
+  {% block meta %}{% endblock %}
+  <link rel="stylesheet" href="{% static 'css/plasma.css' %}?v=6">
+  {% if user.is_authenticated %}
+  <link rel="stylesheet" href="{% static 'css/notifications.css' %}?v=1">
+  {% endif %}
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+  {% include 'includes/header.html' %}
+
+  {% if messages %}
+  <div class="plasma-notification-container" id="flash-messages">
+    {% for message in messages %}
+    <div class="plasma-notification plasma-notification--{% if message.tags == 'error' %}critical{% elif message.tags == 'warning' %}warning{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+      <span class="text-body-s">{{ message }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main class="page-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+  <footer class="plasma-footer plasma-footer--compact">
+    <div class="container">
+      <div class="plasma-footer__bottom">
+        <span>© 2026 Менторика — бесплатный сервис менторинга</span>
+      </div>
+    </div>
+  </footer>
+  {% endblock %}
+
+  <div class="plasma-notification-container" id="notification-container"></div>
+  {% block extra_body %}{% endblock %}
+  <script src="{% static 'js/plasma.js' %}?v=3"></script>
+  {% if user.is_authenticated %}
+  <script src="{% static 'js/notifications.js' %}?v=1"></script>
+  {% endif %}
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

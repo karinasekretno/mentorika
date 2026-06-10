@@ -1,0 +1,77 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профиль ментора — Менторика{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container onboarding-page">
+    <div class="plasma-card plasma-card--elevated onboarding-card">
+      <div class="onboarding-badge">🎓 Анкета ментора</div>
+      <h1 class="text-h2 onboarding-card__title">Подтвердите экспертизу</h1>
+      <p class="text-body-m onboarding-card__subtitle">
+        Заполните анкету максимально подробно — так вас быстрее найдут ученики.
+      </p>
+
+      <form method="post" class="cta-form">
+        {% csrf_token %}
+
+        <div class="onboarding-section">
+          <label class="onboarding-section__label" for="id_bio">{{ form.bio.label }}</label>
+          {{ form.bio }}
+          {% if form.bio.errors %}<p class="onboarding-error">{{ form.bio.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="onboarding-divider"></div>
+
+        <div class="onboarding-section">
+          <span class="onboarding-section__label">Место работы</span>
+          <div class="onboarding-grid" style="margin-top: var(--plasma-spacing-3);">
+            <div>
+              <label class="text-caption text-secondary" for="id_job_title" style="display:block; margin-bottom: 8px;">{{ form.job_title.label }}</label>
+              {{ form.job_title }}
+              {% if form.job_title.errors %}<p class="onboarding-error">{{ form.job_title.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+              <label class="text-caption text-secondary" for="id_company" style="display:block; margin-bottom: 8px;">{{ form.company.label }}</label>
+              {{ form.company }}
+              {% if form.company.errors %}<p class="onboarding-error">{{ form.company.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="onboarding-divider"></div>
+
+        <div class="onboarding-section">
+          <label class="onboarding-section__label" for="id_portfolio_url">{{ form.portfolio_url.label }}</label>
+          {{ form.portfolio_url }}
+          {% if form.portfolio_url.errors %}<p class="onboarding-error">{{ form.portfolio_url.errors.0 }}</p>{% endif %}
+
+          <label class="onboarding-section__label" for="id_portfolio_text" style="margin-top: var(--plasma-spacing-4);">{{ form.portfolio_text.label }}</label>
+          {{ form.portfolio_text }}
+          {% if form.portfolio_text.errors %}<p class="onboarding-error">{{ form.portfolio_text.errors.0 }}</p>{% endif %}
+        </div>
+
+        <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--l" style="width: 100%; margin-top: var(--plasma-spacing-6);">
+          Сохранить и перейти в кабинет
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.onboarding-textarea, textarea').forEach(el => {
+  el.classList.add('onboarding-textarea');
+});
+document.querySelectorAll('.onboarding-input, input[type="text"], input[type="url"], input[type="number"]').forEach(el => {
+  if (!el.closest('.chip-select')) el.classList.add('onboarding-input');
+});
+</script>
+{% endblock %}

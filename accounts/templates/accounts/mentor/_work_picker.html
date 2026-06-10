@@ -1,0 +1,70 @@
+﻿<div class="work-picker" data-work-picker data-max-works="20">
+  <div class="work-picker__rows">
+    {% for row in form.work_rows %}
+    <div class="mentor-anketa__row mentor-work-form-row" data-work-row>
+      <span class="mentor-anketa__label">Место работы</span>
+      <div class="work-picker__entry">
+        <div class="work-picker__head">
+          <input type="text" class="work-picker__company mentor-anketa__input"
+                 name="{{ row.company_field }}" value="{{ row.company }}"
+                 placeholder="Название компании" maxlength="200">
+          <button type="button" class="work-picker__remove" aria-label="Удалить место работы" title="Удалить">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="work-picker__period-range" data-work-period>
+          <input type="month" class="work-picker__month work-picker__start mentor-anketa__input"
+                 name="{{ row.start_field }}" value="{{ row.start }}"
+                 aria-label="Начало периода">
+          <span class="work-picker__period-sep" aria-hidden="true">—</span>
+          <input type="month" class="work-picker__month work-picker__end mentor-anketa__input"
+                 name="{{ row.end_field }}" value="{{ row.end }}"
+                 aria-label="Окончание периода"{% if row.is_current %} disabled{% endif %}>
+          <label class="work-picker__current">
+            <input type="checkbox" class="work-picker__current-cb"
+                   name="{{ row.is_current_field }}" value="1"{% if row.is_current %} checked{% endif %}>
+            <span>настоящее время</span>
+          </label>
+        </div>
+        <input type="text" class="work-picker__job-title mentor-anketa__input"
+               name="{{ row.job_title_field }}" value="{{ row.job_title }}"
+               placeholder="Должность" maxlength="120">
+        <textarea class="work-picker__description mentor-anketa__textarea"
+                  name="{{ row.description_field }}" rows="4"
+                  placeholder="Опишите обязанности и достижения">{{ row.description }}</textarea>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <button type="button" class="plasma-btn plasma-btn--secondary plasma-btn--s work-picker__add">Добавить место работы</button>
+
+  <template class="work-picker__template">
+    <div class="mentor-anketa__row mentor-work-form-row" data-work-row>
+      <span class="mentor-anketa__label">Место работы</span>
+      <div class="work-picker__entry">
+        <div class="work-picker__head">
+          <input type="text" class="work-picker__company mentor-anketa__input"
+                 placeholder="Название компании" maxlength="200">
+          <button type="button" class="work-picker__remove" aria-label="Удалить место работы" title="Удалить">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="work-picker__period-range" data-work-period>
+          <input type="month" class="work-picker__month work-picker__start mentor-anketa__input"
+                 aria-label="Начало периода">
+          <span class="work-picker__period-sep" aria-hidden="true">—</span>
+          <input type="month" class="work-picker__month work-picker__end mentor-anketa__input"
+                 aria-label="Окончание периода">
+          <label class="work-picker__current">
+            <input type="checkbox" class="work-picker__current-cb" value="1">
+            <span>настоящее время</span>
+          </label>
+        </div>
+        <input type="text" class="work-picker__job-title mentor-anketa__input"
+               placeholder="Должность" maxlength="120">
+        <textarea class="work-picker__description mentor-anketa__textarea" rows="4"
+                  placeholder="Опишите обязанности и достижения"></textarea>
+      </div>
+    </div>
+  </template>
+</div>

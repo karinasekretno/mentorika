@@ -1,0 +1,80 @@
+﻿<div class="social-picker" data-social-picker data-other-start="{{ form.social_other_start_index }}" data-max-links="10">
+  <div class="social-picker__icons" role="group" aria-label="Социальные сети">
+    {% for platform in form.social_main_platforms %}
+    <button type="button"
+            class="social-picker__icon-btn{% if platform.url %} social-picker__icon-btn--active{% endif %}"
+            data-social-icon
+            data-platform="{{ platform.value }}"
+            aria-label="{{ platform.label }}"
+            aria-pressed="{% if platform.url %}true{% else %}false{% endif %}"
+            title="{{ platform.label }}">
+      {% include 'accounts/mentor/_social_platform_icon.html' with platform=platform.value %}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div class="social-picker__urls" data-social-main-urls>
+    {% for platform in form.social_main_platforms %}
+    <div class="social-picker__url-row{% if not platform.url %} social-picker__url-row--hidden{% endif %}"
+         data-social-url-row
+         data-platform="{{ platform.value }}">
+      <input type="hidden"
+             class="social-picker__platform-input"
+             name="{{ platform.platform_field }}"
+             value="{{ platform.value }}">
+      <span class="social-picker__url-icon" aria-hidden="true">
+        {% include 'accounts/mentor/_social_platform_icon.html' with platform=platform.value %}
+      </span>
+      <input type="url"
+             class="social-picker__url mentor-anketa__input"
+             name="{{ platform.url_field }}"
+             value="{{ platform.url }}"
+             placeholder="https://..."
+             maxlength="500"
+             aria-label="Ссылка {{ platform.label }}">
+      <button type="button" class="social-picker__remove" aria-label="Удалить {{ platform.label }}" title="Удалить">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if form.social_other_rows %}
+  <div class="social-picker__other" data-social-other>
+    <span class="social-picker__other-label">Другое</span>
+    <div class="social-picker__other-rows" data-social-other-rows>
+      {% for row in form.social_other_rows %}
+      <div class="social-picker__other-row" data-social-other-row>
+        <input type="hidden"
+               class="social-picker__platform-input"
+               name="{{ row.platform_field }}"
+               value="other">
+        <input type="url"
+               class="social-picker__url mentor-anketa__input"
+               name="{{ row.url_field }}"
+               value="{{ row.url }}"
+               placeholder="https://..."
+               maxlength="500"
+               aria-label="Другая ссылка">
+        <button type="button" class="social-picker__remove" aria-label="Удалить ссылку" title="Удалить">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <button type="button" class="social-picker__add-other plasma-btn plasma-btn--secondary plasma-btn--s" data-social-add-other{% if form.social_other_rows %} hidden{% endif %}>Добавить «Другое»</button>
+
+  <template class="social-picker__other-template">
+    <div class="social-picker__other-row" data-social-other-row>
+      <input type="hidden" class="social-picker__platform-input" value="other">
+      <input type="url" class="social-picker__url mentor-anketa__input"
+             placeholder="https://..." maxlength="500" aria-label="Другая ссылка">
+      <button type="button" class="social-picker__remove" aria-label="Удалить ссылку" title="Удалить">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </template>
+</div>

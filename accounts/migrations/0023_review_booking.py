@@ -1,0 +1,24 @@
+﻿import django.db.models.deletion
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('accounts', '0022_sessionbooking_lifecycle_notified'),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name='review',
+            name='booking',
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='review',
+                to='accounts.sessionbooking',
+                verbose_name='Бронирование',
+            ),
+        ),
+    ]

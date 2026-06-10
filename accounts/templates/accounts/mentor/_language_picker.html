@@ -1,0 +1,24 @@
+﻿<div class="lang-picker" data-lang-picker>  <button type="button" class="lang-picker__trigger" aria-expanded="false" aria-haspopup="listbox">
+    <span class="lang-picker__trigger-text">Выберите языки</span>
+    <svg class="lang-picker__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+
+  <div class="lang-picker__dropdown" hidden>
+    <input type="search" class="lang-picker__search" placeholder="Начните вводить язык..." autocomplete="off">
+    <ul class="lang-picker__list" role="listbox">
+      {% for value, label in form.fields.languages.choices %}
+      <li class="lang-picker__item" data-label="{{ label|lower }}">
+        <label class="lang-picker__option">
+          <input type="checkbox" name="languages" value="{{ value }}"
+                 {% if form.languages.value and value in form.languages.value %}checked{% endif %}>
+          <span>{{ label }}</span>
+        </label>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="lang-picker__empty" hidden>Ничего не найдено</p>
+  </div>
+
+  <div class="mentor-lang-tags lang-picker__tags" aria-live="polite"></div>
+  {% if form.languages.errors %}<p class="mentor-anketa__error">{{ form.languages.errors.0 }}</p>{% endif %}
+</div>

@@ -1,0 +1,7 @@
+﻿<span class="chat-list__avatar" aria-hidden="true">
+  {% if photo %}
+  <img src="{{ photo.url }}" alt="" class="chat-list__avatar-img">
+  {% else %}
+  <span class="chat-list__avatar-initials">{{ initials }}</span>
+  {% endif %}
+</span>

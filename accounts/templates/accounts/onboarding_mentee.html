@@ -1,0 +1,51 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профиль менти — Менторика{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container onboarding-page">
+    <div class="plasma-card plasma-card--elevated onboarding-card">
+      <div class="onboarding-badge">👋 Профиль ученика</div>
+      <h1 class="text-h2 onboarding-card__title">Расскажите о себе</h1>
+      <p class="text-body-m onboarding-card__subtitle">
+        Это поможет подобрать менторов под ваши цели. Займёт пару минут.
+      </p>
+
+      <form method="post" class="cta-form">
+        {% csrf_token %}
+
+        <div class="onboarding-section">
+          <label class="onboarding-section__label" for="id_bio">{{ form.bio.label }}</label>
+          {{ form.bio }}
+          {% if form.bio.errors %}<p class="onboarding-error">{{ form.bio.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="onboarding-section">
+          <label class="onboarding-section__label" for="id_goals">{{ form.goals.label }}</label>
+          {{ form.goals }}
+          <p class="onboarding-section__hint">Чем конкретнее цель — тем точнее подбор ментора</p>
+          {% if form.goals.errors %}<p class="onboarding-error">{{ form.goals.errors.0 }}</p>{% endif %}
+        </div>
+
+        <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--l" style="width: 100%; margin-top: var(--plasma-spacing-6);">
+          Сохранить и начать
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('textarea').forEach(el => {
+  el.classList.add('onboarding-textarea');
+});
+</script>
+{% endblock %}

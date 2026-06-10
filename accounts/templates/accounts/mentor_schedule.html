@@ -1,0 +1,61 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Расписание — Менторика{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width: 640px;">
+    <h1 class="text-h2" style="margin-bottom: var(--plasma-spacing-4);">Моё расписание</h1>
+    <p class="text-body-m text-secondary" style="margin-bottom: var(--plasma-spacing-8);">
+      Добавьте свободные слоты — ученики смогут их забронировать.
+    </p>
+
+    <div class="plasma-card plasma-card--elevated" style="margin-bottom: var(--plasma-spacing-8);">
+      <h2 class="text-h3" style="margin-bottom: var(--plasma-spacing-4);">Новый слот</h2>
+      <form method="post" class="cta-form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div style="margin-bottom: var(--plasma-spacing-4);">
+          <label class="text-body-s" style="font-weight: 600; display: block; margin-bottom: 8px;">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<p class="text-caption" style="color: var(--plasma-colors-critical);">{{ field.errors.0 }}</p>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--m">Добавить слот</button>
+      </form>
+    </div>
+
+    <h2 class="text-h3" style="margin-bottom: var(--plasma-spacing-4);">Текущие слоты</h2>
+    {% for slot in slots %}
+    <div class="plasma-card plasma-card--surface plasma-card--horizontal" style="margin-bottom: 12px; justify-content: space-between;">
+      <div>
+        <p class="text-body-m" style="font-weight: 600;">{{ slot.date|date:"d E Y" }}</p>
+        <p class="text-body-s text-secondary">{{ slot.start_time|time:"H:i" }} – {{ slot.end_time|time:"H:i" }}</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        {% if slot.has_active_booking %}
+        <span class="mentor-card__tag">Забронирован</span>
+        {% else %}
+        <span class="text-caption text-accent">Свободен</span>
+        <form method="post" action="{% url 'delete_slot' slot.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="plasma-btn plasma-btn--critical plasma-btn--xs">Удалить</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-body-s text-secondary">Слотов пока нет.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+  form input[type="date"], form input[type="time"] {
+    width: 100%; padding: 12px; border-radius: 8px;
+    border: 1px solid var(--plasma-colors-border); font-family: inherit;
+  }
+</style>
+{% endblock %}

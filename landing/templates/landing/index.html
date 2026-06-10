@@ -1,0 +1,325 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Менторика — Персональный менторинг для карьерного роста{% endblock %}
+
+{% block body_class %}landing-page{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Найдите ментора по навыкам и целям, запишитесь на сессию и развивайтесь в удобном 1-on-1 формате — бесплатно для учеников.">
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/landing.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+
+<section class="landing-hero">
+  <div class="landing-hero__bg" aria-hidden="true"></div>
+  <div class="container">
+    <div class="landing-hero__grid">
+      <div class="landing-hero__content">
+        <div class="landing-hero__eyebrow">Платформа менторинга</div>
+        <h1 class="landing-hero__title">
+          Прокачивай навыки<br>с <span>менторами по делу</span>
+        </h1>
+        <p class="landing-hero__subtitle">
+          Живые 1-on-1 сессии, чат и расписание в одной платформе. Смотрите профили, выбирайте наставника под свои цели — бесплатно для учеников.
+        </p>
+        <div class="landing-hero__actions">
+          <a href="{% url 'mentor_list' %}" class="plasma-btn plasma-btn--primary plasma-btn--l">Подобрать ментора</a>
+          <a href="{% url 'register' %}" class="plasma-btn plasma-btn--secondary plasma-btn--l">Создать аккаунт</a>
+        </div>
+        <div class="landing-hero__trust">
+          <div class="landing-hero__trust-item">
+            <strong>{% if mentor_count %}{{ mentor_count }}{% else %}50{% endif %}+</strong>
+            <span>менторов на платформе</span>
+          </div>
+          <div class="landing-hero__trust-item">
+            <strong>0 ₽</strong>
+            <span>для учеников</span>
+          </div>
+          <div class="landing-hero__trust-item">
+            <strong>1-on-1</strong>
+            <span>живые сессии и чат</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="landing-hero__visual" aria-hidden="true">
+        {% if hero_mentors %}
+        <div class="landing-hero__collage">
+          {% for mentor in hero_mentors %}
+          <div class="landing-hero__collage-item landing-hero__collage-item--{{ forloop.counter }}">
+            {% if mentor.photo_url %}
+            <img src="{{ mentor.photo_url }}" alt="{{ mentor.full_name }}" loading="eager">
+            {% else %}
+            <span class="landing-hero__collage-placeholder">{{ mentor.avatar }}</span>
+            {% endif %}
+            <div class="landing-hero__collage-caption">
+              <strong>{{ mentor.name }}</strong>
+              {% if mentor.role %}<span>{{ mentor.role }}</span>{% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="landing-hero__collage landing-hero__collage--empty">
+          <div class="landing-hero__collage-shape landing-hero__collage-shape--1"></div>
+          <div class="landing-hero__collage-shape landing-hero__collage-shape--2"></div>
+          <div class="landing-hero__collage-shape landing-hero__collage-shape--3"></div>
+        </div>
+        {% endif %}
+        <div class="landing-hero__chip">
+          <span class="landing-hero__chip-dot"></span>
+          Сессии и чат в одном месте
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="landing-marquee" aria-label="Направления менторинга">
+  <div class="landing-marquee__label">Популярные направления</div>
+  <div class="landing-marquee__track">
+  {% for _ in "12" %}
+    <div class="landing-marquee__group">
+      {% for tag in skill_tags %}
+      <span class="landing-marquee__tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
+  {% endfor %}
+  </div>
+</section>
+
+<section class="landing-highlights">
+  <div class="container">
+    <div class="landing-highlights__grid">
+      {% for item in highlights %}
+      <article class="landing-highlight">
+        <div class="landing-highlight__icon">{{ item.icon }}</div>
+        <h3 class="landing-highlight__title">{{ item.title }}</h3>
+        <p class="landing-highlight__text">{{ item.text }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="landing-section landing-section--muted" id="features">
+  <div class="container">
+    <div class="landing-section__head">
+      <span class="landing-section__label">Для кого</span>
+      <h2 class="landing-section__title">Менторика подходит каждому этапу карьеры</h2>
+      <p class="landing-section__desc">Выберите свой сценарий и найдите ментора под конкретную задачу.</p>
+    </div>
+    <div class="landing-audiences">
+      {% for item in audiences %}
+      <article class="landing-audience">
+        <span class="landing-audience__badge">{{ item.badge }}</span>
+        <h3 class="landing-audience__title">{{ item.title }}</h3>
+        <p class="landing-audience__text">{{ item.text }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="landing-section" id="how">
+  <div class="container">
+    <div class="landing-section__head">
+      <span class="landing-section__label">Возможности</span>
+      <h2 class="landing-section__title">Всё для эффективного менторинга в одном месте</h2>
+      <p class="landing-section__desc">Удобная платформа для учеников и менторов — без лишних инструментов.</p>
+    </div>
+    <div class="landing-features">
+      {% for feature in features %}
+      <article class="landing-feature">
+        <div class="landing-feature__icon">{{ feature.icon }}</div>
+        <h3 class="landing-feature__title">{{ feature.title }}</h3>
+        <p class="landing-feature__desc">{{ feature.description }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="landing-section landing-section--muted" id="mentors">
+  <div class="container">
+    <div class="landing-section__head">
+      <span class="landing-section__label">Менторы</span>
+      {% if mentors_personalized %}
+      <h2 class="landing-section__title">Рекомендуем для вас</h2>
+      <p class="landing-section__desc">
+        Подобрали менторов по вашим интересам
+        {% if mentee_interests %}— {{ mentee_interests|join:", " }}{% if mentee_interests|length >= 5 %}…{% endif %}{% endif %}.
+      </p>
+      {% else %}
+      <h2 class="landing-section__title">Наши менторы</h2>
+      <p class="landing-section__desc">
+        {% if user.is_authenticated and user.profile.role == 'mentee' and not mentors_has_interests %}
+        Заполните интересы в <a href="{% url 'mentee_profile' %}?edit=1" class="text-accent">профиле</a>, чтобы получить персональные рекомендации.
+        {% else %}
+        Реальные профили с рейтингом, навыками и свободными слотами.
+        {% endif %}
+      </p>
+      {% endif %}
+    </div>
+    <div class="landing-mentors">
+      {% for mentor in mentors %}
+      <article class="landing-mentor{% if mentor.recommended %} landing-mentor--recommended{% endif %}">
+        <a href="{% url 'mentor_detail' mentor.slug %}" class="landing-mentor__photo-link">
+          <div class="landing-mentor__photo">
+            {% if mentor.photo_url %}
+            <img src="{{ mentor.photo_url }}" alt="{{ mentor.full_name }}" loading="lazy">
+            {% else %}
+            <span class="landing-mentor__photo-placeholder">{{ mentor.avatar }}</span>
+            {% endif %}
+            {% if mentor.recommended %}
+            <span class="landing-mentor__badge">Рекомендуем</span>
+            {% endif %}
+          </div>
+        </a>
+        <div class="landing-mentor__body">
+          <div class="landing-mentor__top">
+            <h3 class="landing-mentor__name">
+              <a href="{% url 'mentor_detail' mentor.slug %}">{{ mentor.name }}</a>
+            </h3>
+            {% if mentor.rating %}
+            <span class="landing-mentor__rating">★ {{ mentor.rating|floatformat:1 }}</span>
+            {% endif %}
+          </div>
+          {% if mentor.role or mentor.company %}
+          <p class="landing-mentor__headline">
+            {% if mentor.role %}{{ mentor.role }}{% endif %}{% if mentor.role and mentor.company %} · {% endif %}{% if mentor.company %}{{ mentor.company }}{% endif %}
+          </p>
+          {% endif %}
+          {% if mentor.matched_skills %}
+          <p class="landing-mentor__match">Совпадение: {{ mentor.matched_skills|join:", " }}</p>
+          {% endif %}
+          {% if mentor.summary %}
+          <p class="landing-mentor__summary">{{ mentor.summary }}</p>
+          {% endif %}
+          {% if mentor.tags or mentor.skills_extra %}
+          <div class="landing-mentor__tags">
+            {% for tag in mentor.tags %}
+            <span class="landing-mentor__tag{% if tag in mentor.matched_skills %} landing-mentor__tag--match{% endif %}">{{ tag }}</span>
+            {% endfor %}
+            {% if mentor.skills_extra %}
+            <span class="landing-mentor__tag landing-mentor__tag--more">И ещё {{ mentor.skills_extra }}…</span>
+            {% endif %}
+          </div>
+          {% endif %}
+          <a href="{% url 'mentor_detail' mentor.slug %}" class="landing-mentor__cta">Подробнее</a>
+        </div>
+      </article>
+      {% empty %}
+      <div class="plasma-card plasma-card--surface" style="grid-column:1/-1;text-align:center;padding:48px;">
+        <p class="text-body-l text-secondary">Менторы скоро появятся. <a href="{% url 'register' %}" class="text-accent">Зарегистрируйтесь</a> как ментор или ученик.</p>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="landing-mentors__more">
+      <a href="{% url 'mentor_list' %}" class="plasma-btn plasma-btn--secondary plasma-btn--m">Смотреть всех менторов</a>
+    </div>
+  </div>
+</section>
+
+<section class="landing-section" id="pricing">
+  <div class="container">
+    <div class="landing-section__head">
+      <span class="landing-section__label">Как начать</span>
+      <h2 class="landing-section__title">Четыре шага до первой сессии</h2>
+    </div>
+    <div class="landing-steps">
+      <article class="landing-step">
+        <h3 class="landing-step__title">Регистрация</h3>
+        <p class="landing-step__desc">Укажите имя, email и выберите роль: менти или ментор.</p>
+      </article>
+      <article class="landing-step">
+        <h3 class="landing-step__title">Профиль</h3>
+        <p class="landing-step__desc">Расскажите о целях и навыках — так проще найти подходящего ментора.</p>
+      </article>
+      <article class="landing-step">
+        <h3 class="landing-step__title">Выбор ментора</h3>
+        <p class="landing-step__desc">Фильтруйте каталог по направлениям и рейтингу.</p>
+      </article>
+      <article class="landing-step">
+        <h3 class="landing-step__title">Запись</h3>
+        <p class="landing-step__desc">Выберите слот в календаре и подтвердите встречу.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="landing-section landing-section--muted">
+  <div class="container">
+    <div class="landing-section__head">
+      <span class="landing-section__label">Тарифы</span>
+      <h2 class="landing-section__title">Бесплатный сервис без подписок</h2>
+      <p class="landing-section__desc">Менторинг доступен каждому — без скрытых платежей.</p>
+    </div>
+    {% for plan in plans %}
+    <div class="landing-pricing">
+      <span class="landing-pricing__badge">Для учеников</span>
+      <h3 class="text-h3" style="margin-bottom:8px;">{{ plan.name }}</h3>
+      <div class="landing-pricing__price">0 <small>₽</small></div>
+      <p class="landing-pricing__period">/ {{ plan.period }}</p>
+      <ul class="landing-pricing__list">
+        {% for feat in plan.features %}
+        <li>{{ feat }}</li>
+        {% endfor %}
+      </ul>
+      <a href="{% url 'register' %}" class="plasma-btn plasma-btn--primary plasma-btn--l" style="width:100%;">Начать бесплатно</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="landing-cta" id="start">
+  <div class="landing-cta__inner">
+    <h2 class="landing-cta__title">Готовы начать?</h2>
+    <p class="landing-cta__desc">Зарегистрируйтесь, заполните профиль и выберите ментора — это займёт несколько минут.</p>
+    <div class="landing-cta__actions">
+      <a href="{% url 'register' %}" class="plasma-btn plasma-btn--primary plasma-btn--l">Зарегистрироваться</a>
+      <a href="{% url 'mentor_list' %}" class="plasma-btn plasma-btn--secondary plasma-btn--l">Смотреть менторов</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block footer %}
+<footer class="plasma-footer">
+  <div class="container">
+    <div class="plasma-footer__grid">
+      <div class="plasma-footer__brand">
+        <div class="plasma-header__logo">
+          <div class="plasma-header__logo-icon">М</div>
+          Менторика
+        </div>
+        <p>Платформа персонального менторинга для карьерного роста.</p>
+      </div>
+      <div class="plasma-footer__col">
+        <h4>Платформа</h4>
+        <a href="{% url 'index' %}#features">Возможности</a>
+        <a href="{% url 'mentor_list' %}">Менторы</a>
+        <a href="{% url 'index' %}#pricing">Тарифы</a>
+      </div>
+      <div class="plasma-footer__col">
+        <h4>Аккаунт</h4>
+        <a href="{% url 'login' %}">Войти</a>
+        <a href="{% url 'register' %}">Регистрация</a>
+      </div>
+      <div class="plasma-footer__col">
+        <h4>Контакты</h4>
+        <a href="mailto:hello@mentorika.ru">hello@mentorika.ru</a>
+      </div>
+    </div>
+    <div class="plasma-footer__bottom">
+      <span>© 2026 Менторика — бесплатный сервис менторинга</span>
+    </div>
+  </div>
+</footer>
+{% endblock %}

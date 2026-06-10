@@ -1,0 +1,272 @@
+﻿<div class="mentor-anketa mentor-anketa--readonly">
+  <div class="mentor-anketa__block">
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">Краткое описание</span>
+      <div class="mentor-anketa__value-readonly">
+        {% if mentor.headline %}{{ mentor.headline }}{% else %}<span class="mentor-anketa__empty-value">—</span>{% endif %}
+      </div>
+    </div>
+
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">Пол</span>
+      <div class="mentor-anketa__value-readonly">
+        {% if mentor.get_gender_display %}{{ mentor.get_gender_display }}{% else %}<span class="mentor-anketa__empty-value">—</span>{% endif %}
+      </div>
+    </div>
+
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">Рейтинг</span>
+      <div class="mentor-anketa__value-readonly">
+        <span class="mentor-anketa__rating">
+          <span class="mentor-anketa__rating-star">★</span>
+          {% if mentor.has_real_rating %}{{ mentor.rating_display|floatformat:1 }}{% else %}—{% endif %}
+          {% if mentor.completed_sessions_count %}<span class="mentor-anketa__rating-meta"> · {{ mentor.completed_sessions_count }} сессий</span>{% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mentor-anketa__block">
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">О себе</span>
+      <div class="mentor-anketa__value-readonly mentor-anketa__bio">
+        {% if mentor.bio_display %}{{ mentor.bio_display|linebreaksbr }}{% else %}<span class="mentor-anketa__empty-value">—</span>{% endif %}
+      </div>
+    </div>
+
+    <div class="mentor-anketa__row">
+      <span class="mentor-anketa__label">Языки</span>
+      <div class="mentor-anketa__value-readonly">
+        {% if mentor.language_list %}
+        <div class="mentor-lang-tags">
+          {% for lang in mentor.language_list %}
+          <span class="mentor-lang-tag">{{ lang|upper }}</span>
+          {% endfor %}
+        </div>
+        {% else %}
+        <span class="mentor-anketa__empty-value">—</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="mentor-about-section">
+    <div class="mentor-about-intro">
+      <div class="mentor-section-head">
+        <hr class="mentor-section-divider">
+      </div>
+      <h2 class="mentor-section-title">О менторе</h2>
+    </div>
+
+    <div class="mentor-anketa__block">
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">Скиллы</span>
+        <div class="mentor-anketa__value-readonly">
+          {% if mentor_skills %}
+          <div class="mentor-skill-tags">
+            {% for skill in mentor_skills %}
+            <span class="mentor-skill-tag">{{ skill.name|upper }} - {{ skill.get_level_display|upper }}</span>
+            {% endfor %}
+          </div>
+          {% else %}
+          <span class="mentor-anketa__empty-value">—</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label mentor-anketa__label--multiline">Работаю с запросами</span>
+        <div class="mentor-anketa__value-readonly">
+          {% if mentor_topics %}
+          <ul class="mentor-topic-list">
+            {% for topic in mentor_topics %}
+            <li class="mentor-topic-item">
+              <span class="mentor-topic-bullet" aria-hidden="true"></span>
+              <p class="mentor-topic-text">{{ topic.description|default:topic.title }}</p>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <span class="mentor-anketa__empty-value">—</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mentor-work-section">
+    <div class="mentor-work-intro">
+      <div class="mentor-section-head">
+        <hr class="mentor-section-divider">
+      </div>
+      <h2 class="mentor-section-title">Работа и проекты</h2>
+    </div>
+
+    <div class="mentor-anketa__block mentor-work-section__content">
+      {% if mentor_work_experiences %}
+      {% for work in mentor_work_experiences %}
+      <div class="mentor-anketa__row mentor-work-row">
+        <span class="mentor-anketa__label">Место работы</span>
+        <div class="mentor-work-entry">
+          <div class="mentor-work-entry__head">
+            <span class="mentor-work-entry__company">{{ work.company }}</span>
+            {% if work.period_display %}<span class="mentor-work-entry__period">{{ work.period_display }}</span>{% endif %}
+          </div>
+          {% if work.job_title %}<p class="mentor-work-entry__title">{{ work.job_title }}</p>{% endif %}
+          {% if work.description %}<p class="mentor-work-entry__description">{{ work.description|linebreaksbr }}</p>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label">Место работы</span>
+        <div class="mentor-anketa__value-readonly"><span class="mentor-anketa__empty-value">—</span></div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="mentor-education-section">
+    <div class="mentor-education-intro">
+      <div class="mentor-section-head">
+        <hr class="mentor-section-divider">
+      </div>
+      <h2 class="mentor-section-title">Образование</h2>
+    </div>
+
+    <div class="mentor-anketa__block mentor-education-section__content">
+      {% if mentor_education %}
+      {% for entry in mentor_education %}
+      <div class="mentor-anketa__row mentor-education-row">
+        <span class="mentor-anketa__label mentor-anketa__label--multiline">Учебное заведение</span>
+        <div class="mentor-education-entry">
+          <div class="mentor-education-entry__head">
+            <span class="mentor-education-entry__institution">{{ entry.institution }}</span>
+            {% if entry.graduation_display %}<span class="mentor-education-entry__year">{{ entry.graduation_display }}</span>{% endif %}
+          </div>
+          {% if entry.specialization %}<p class="mentor-education-entry__specialization">{{ entry.specialization }}</p>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="mentor-anketa__row">
+        <span class="mentor-anketa__label mentor-anketa__label--multiline">Учебное заведение</span>
+        <div class="mentor-anketa__value-readonly"><span class="mentor-anketa__empty-value">—</span></div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="mentor-portfolio-section">
+    <div class="mentor-portfolio-intro">
+      <div class="mentor-section-head">
+        <hr class="mentor-section-divider">
+      </div>
+      <h2 class="mentor-section-title">Портфолио</h2>
+    </div>
+
+    <div class="mentor-anketa__block mentor-portfolio-section__content">
+      {% if mentor_portfolio_links or mentor.portfolio_text or mentor.portfolio_url %}
+      <div class="mentor-portfolio-readonly">
+        {% if mentor_portfolio_links %}
+        <ul class="mentor-link-list">
+          {% for link in mentor_portfolio_links %}
+          <li><a href="{{ link.url }}" class="mentor-link-list__item mentor-link-list__item--portfolio" target="_blank" rel="noopener noreferrer">{{ link.url }}</a></li>
+          {% endfor %}
+        </ul>
+        {% elif mentor.portfolio_url %}
+        <ul class="mentor-link-list">
+          <li><a href="{{ mentor.portfolio_url }}" class="mentor-link-list__item mentor-link-list__item--portfolio" target="_blank" rel="noopener noreferrer">{{ mentor.portfolio_url }}</a></li>
+        </ul>
+        {% endif %}
+        {% if mentor.portfolio_text %}
+        <p class="mentor-portfolio-readonly__text">{{ mentor.portfolio_text|linebreaksbr }}</p>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="mentor-anketa__value-readonly"><span class="mentor-anketa__empty-value">—</span></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="mentor-social-section">
+    <div class="mentor-social-intro">
+      <div class="mentor-section-head">
+        <hr class="mentor-section-divider">
+      </div>
+      <h2 class="mentor-section-title">Социальные сети</h2>
+    </div>
+
+    <div class="mentor-anketa__block mentor-social-section__content">
+      {% if mentor_social_links %}
+      <div class="mentor-social-readonly">
+        <div class="mentor-social-readonly__icons">
+          {% for item in mentor_social_main %}
+          {% if item.url %}
+          <a href="{{ item.url }}" class="mentor-social-icon mentor-social-icon--{{ item.platform }}" target="_blank" rel="noopener noreferrer" title="{{ item.label }}">
+            {% include 'accounts/mentor/_social_platform_icon.html' with platform=item.platform %}
+          </a>
+          {% endif %}
+          {% endfor %}
+        </div>
+        {% if mentor_social_other %}
+        <div class="mentor-social-readonly__other">
+          <span class="mentor-social-readonly__other-label">Другое</span>
+          <ul class="mentor-link-list mentor-link-list--social">
+            {% for link in mentor_social_other %}
+            <li class="mentor-social-link">
+              <a href="{{ link.url }}" class="mentor-social-link__url" target="_blank" rel="noopener noreferrer">{{ link.url }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="mentor-anketa__value-readonly"><span class="mentor-anketa__empty-value">—</span></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="mentor-reviews-section">
+    <div class="mentor-reviews-intro">
+      <div class="mentor-section-head">
+        <hr class="mentor-section-divider">
+      </div>
+      <h2 class="mentor-section-title">Отзывы</h2>
+    </div>
+
+    <div class="mentor-anketa__block mentor-reviews-section__content">
+      {% if mentor_reviews %}
+      <ul class="mentor-reviews-list">
+        {% for review in mentor_reviews %}
+        <li class="mentor-review-card">
+          <div class="mentor-review-card__header">
+            <span class="mentor-review-card__author">
+              {% if review.mentee.first_name %}
+              {{ review.mentee.first_name }}{% if review.mentee.last_name %} {{ review.mentee.last_name|slice:":1" }}.{% endif %}
+              {% else %}
+              {{ review.mentee.get_full_name|default:review.mentee.username }}
+              {% endif %}
+            </span>
+            <div class="mentor-review-card__stars" aria-label="Оценка {{ review.rating }} из 5">
+              {% for i in "12345" %}
+              <span class="mentor-review-card__star{% if forloop.counter <= review.rating %} mentor-review-card__star--filled{% endif %}" aria-hidden="true">★</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% if review.text %}
+          <p class="mentor-review-card__text">{{ review.text|linebreaksbr }}</p>
+          {% endif %}
+          {% if review.booking_id %}
+          <p class="mentor-review-card__date">Сессия · {{ review.booking.slot.date|date:"d E Y" }}</p>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="mentor-reviews-empty">Пока нет отзывов от учеников.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>

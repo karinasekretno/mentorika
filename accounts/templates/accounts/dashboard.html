@@ -1,0 +1,54 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Личный кабинет — Менторика{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: var(--plasma-spacing-8);">
+      <div>
+        <h1 class="text-h2">Привет, {{ user.first_name|default:user.username }}!</h1>
+        <p class="text-body-m text-secondary">Роль: {{ profile.get_role_display }}</p>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--plasma-spacing-6);">
+      {% if profile.role == 'mentee' %}
+      <div class="plasma-card plasma-card--elevated">
+        <h2 class="text-h3" style="margin-bottom: var(--plasma-spacing-4);">Я учусь</h2>
+        <a href="{% url 'mentor_list' %}" class="plasma-btn plasma-btn--primary plasma-btn--m" style="width: 100%; margin-bottom: var(--plasma-spacing-4);">Найти ментора</a>
+        {% if my_bookings %}
+        <p class="text-body-s text-secondary" style="margin-bottom: var(--plasma-spacing-3);">Ближайшие сессии:</p>
+        {% for b in my_bookings %}
+        <div class="plasma-card plasma-card--surface" style="padding: 12px; margin-bottom: 8px;">
+          <p class="text-body-s" style="font-weight: 600;">{{ b.mentor.display_name }}</p>
+          <p class="text-caption text-secondary">{{ b.slot.date|date:"d E Y" }}, {{ b.slot.start_time|time:"H:i" }}–{{ b.slot.end_time|time:"H:i" }}</p>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="text-body-s text-secondary">Пока нет забронированных сессий.</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if profile.role == 'mentor' and mentor %}
+      <div class="plasma-card plasma-card--elevated">
+        <h2 class="text-h3" style="margin-bottom: var(--plasma-spacing-4);">Я ментор</h2>
+        <a href="{% url 'mentor_cabinet' %}" class="plasma-btn plasma-btn--primary plasma-btn--m" style="width: 100%; margin-bottom: var(--plasma-spacing-4);">Кабинет ментора</a>
+        <a href="{% url 'mentor_schedule' %}" class="plasma-btn plasma-btn--primary plasma-btn--m" style="width: 100%; margin-bottom: var(--plasma-spacing-4);">Настроить расписание</a>
+        <a href="{% url 'mentor_detail' mentor.slug %}" class="plasma-btn plasma-btn--secondary plasma-btn--s" style="width: 100%;">Мой профиль</a>
+        {% if mentor_bookings %}
+        <p class="text-body-s text-secondary" style="margin: var(--plasma-spacing-4) 0 var(--plasma-spacing-3);">Ближайшие встречи:</p>
+        {% for b in mentor_bookings %}
+        <div class="plasma-card plasma-card--surface" style="padding: 12px; margin-bottom: 8px;">
+          <p class="text-body-s" style="font-weight: 600;">{{ b.mentee.get_full_name|default:b.mentee.username }}</p>
+          <p class="text-caption text-secondary">{{ b.slot.date|date:"d E Y" }}, {{ b.slot.start_time|time:"H:i" }}</p>
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

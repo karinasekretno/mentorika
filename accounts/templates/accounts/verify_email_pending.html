@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Подтвердите email — Менторика{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width: 520px;">
+    <div class="plasma-card plasma-card--elevated">
+      <h1 class="text-h2" style="margin-bottom: var(--plasma-spacing-4);">Подтвердите email</h1>
+      <p class="text-body-m text-secondary" style="margin-bottom: var(--plasma-spacing-6);">
+        Мы отправили письмо на <strong>{{ email }}</strong>.
+        Перейдите по ссылке в письме, чтобы активировать аккаунт и пользоваться Менторикой.
+      </p>
+      <p class="text-body-s text-secondary" style="margin-bottom: var(--plasma-spacing-6);">
+        Не пришло письмо? Проверьте папку «Спам» или запросите отправку снова.
+      </p>
+
+      <form method="post" action="{% url 'resend_verification_email' %}">
+        {% csrf_token %}
+        <button type="submit" class="plasma-btn plasma-btn--primary plasma-btn--l" style="width: 100%;"
+                {% if not can_resend %}disabled{% endif %}>
+          Отправить снова
+        </button>
+      </form>
+      {% if not can_resend %}
+      <p class="text-body-s text-secondary" style="margin-top: var(--plasma-spacing-3); text-align: center;">
+        Повторная отправка будет доступна через минуту.
+      </p>
+      {% endif %}
+
+      <p class="text-body-s text-secondary" style="margin-top: var(--plasma-spacing-6); text-align: center;">
+        <a href="{% url 'logout' %}" class="text-accent">Выйти</a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+﻿{% extends 'accounts/mentee/base.html' %}
+
+{% block mentee_title %}Чаты{% endblock %}
+
+{% block mentee_content %}
+<header class="mentor-profile-header">
+  <div class="mentor-profile-header__top">
+    <h1 class="mentor-profile-header__name">Чаты</h1>
+  </div>
+  <hr class="mentor-profile-header__divider">
+</header>
+
+<div class="chat-layout chat-layout--list-only">
+  {% include 'accounts/chat/_conversation_list.html' with role='mentee' %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% load static %}
+{{ block.super }}
+<script src="{% static 'js/chat-datetime.js' %}?v=1"></script>
+<script src="{% static 'js/chat-list.js' %}?v=2"></script>
+{% endblock %}

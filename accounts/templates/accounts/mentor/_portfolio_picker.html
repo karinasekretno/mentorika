@@ -1,0 +1,27 @@
+﻿<div class="portfolio-picker" data-portfolio-picker>
+  <div class="portfolio-picker__rows" data-portfolio-rows data-max-links="10">
+    {% for row in form.portfolio_rows %}
+    <div class="portfolio-picker__row" data-portfolio-row>
+      <input type="url" class="portfolio-picker__url mentor-anketa__input"
+             name="{{ row.field }}" value="{{ row.url }}"
+             placeholder="https://..." maxlength="500">
+      <button type="button" class="portfolio-picker__remove" aria-label="Удалить ссылку" title="Удалить">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+  <button type="button" class="plasma-btn plasma-btn--secondary plasma-btn--s portfolio-picker__add">Добавить ссылку</button>
+  <textarea name="portfolio_description" class="portfolio-picker__description mentor-anketa__textarea" rows="4"
+            placeholder="Ключевые проекты, достижения, кейсы...">{{ form.portfolio_description.value|default:'' }}</textarea>
+
+  <template class="portfolio-picker__template">
+    <div class="portfolio-picker__row" data-portfolio-row>
+      <input type="url" class="portfolio-picker__url mentor-anketa__input"
+             placeholder="https://..." maxlength="500">
+      <button type="button" class="portfolio-picker__remove" aria-label="Удалить ссылку" title="Удалить">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </template>
+</div>
