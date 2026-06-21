@@ -8,7 +8,7 @@ from accounts.models import RecommendationEvent, RecommendationExposure
 
 
 class Command(BaseCommand):
-    help = 'Export anonymized recommendation dataset to CSV for future model training.'
+    help = 'Export pseudonymized recommendation dataset to CSV for future model training.'
 
     def add_arguments(self, parser):
         parser.add_argument(

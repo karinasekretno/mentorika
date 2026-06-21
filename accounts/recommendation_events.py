@@ -101,9 +101,9 @@ def has_prior_confirmed_or_completed_session(mentee, mentor, exclude_booking_id=
 def record_booking_created(request, booking):
     exposure = get_active_exposure(request, booking.mentor)
     if exposure is None:
-        return
+        return None, False
 
-    record_event_once(
+    event, created = record_event_once(
         exposure,
         RecommendationEvent.EVENT_BOOKING_CREATED,
         booking=booking,
@@ -119,6 +119,8 @@ def record_booking_created(request, booking):
             RecommendationEvent.EVENT_REPEAT_BOOKING,
             booking=booking,
         )
+
+    return event, created
 
 
 def record_attendance_confirmed(booking):
