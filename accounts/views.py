@@ -101,6 +101,13 @@ from accounts.models import (
     UserProfile,
 )
 from accounts.slot_utils import nearest_slots_by_mentor, sort_mentors_by_nearest_slot
+from accounts.recommendation_events import (
+    handle_profile_opened_from_recommendation,
+    record_attendance_confirmed,
+    record_booking_cancelled,
+    record_booking_created,
+    record_review_created,
+)
 from accounts.review_utils import (
     create_session_review,
     recalculate_mentor_rating,
@@ -1083,6 +1090,10 @@ def mentor_detail(request, slug):
         slug=slug,
     )
 
+    tracking_token = (request.GET.get('rec') or '').strip()
+    if tracking_token:
+        handle_profile_opened_from_recommendation(request, tracking_token, mentor)
+
     return render(request, 'accounts/mentor_detail.html', {
         'mentor': mentor,
         **mentor_profile_sections_context(mentor),
@@ -1132,6 +1143,7 @@ def book_session(request, slug):
             slot.save(update_fields=['is_available'])
             conversation = notify_booking_in_chat(booking)
             notify_booking_created(booking)
+            record_booking_created(request, booking)
     except Exception:
         messages.error(request, 'Не удалось забронировать слот. Попробуйте снова.')
         return redirect('mentor_detail', slug=slug)
@@ -1158,6 +1170,7 @@ def booking_attendance(request, booking_id):
             return redirect('mentee_cabinet')
         booking.confirm_attendance()
         notify_attendance_confirmed(booking)
+        record_attendance_confirmed(booking)
         messages.success(request, 'Вы подтвердили участие в сессии.')
     elif decision == 'decline':
         if not booking.can_cancel_booking:
@@ -1166,6 +1179,7 @@ def booking_attendance(request, booking_id):
         booking.cancel_booking()
         notify_booking_event_in_chat(booking, booking_cancelled_message(booking))
         notify_booking_cancelled(booking, cancelled_by='mentee')
+        record_booking_cancelled(booking)
         messages.info(request, 'Запись на сессию отменена.')
     else:
         messages.error(request, 'Некорректный ответ.')
@@ -1217,6 +1231,7 @@ def booking_rate(request, booking_id):
     if rating < 1 or rating > 5:
         return JsonResponse({'error': 'Выберите от 1 до 5 звёзд.'}, status=400)
     review = create_session_review(booking, request.user, rating, text=text)
+    record_review_created(booking, review)
     return JsonResponse({
         'ok': True,
         'rating': review.rating,
@@ -1256,6 +1271,7 @@ def mentor_booking_manage(request, booking_id):
         booking.cancel_booking()
         notify_booking_event_in_chat(booking, booking_cancelled_message(booking))
         notify_booking_cancelled(booking, cancelled_by='mentor')
+        record_booking_cancelled(booking)
         messages.info(request, 'Запись отменена. Слот снова доступен для записи.')
     elif action == 'reschedule':
         if not booking.can_mentor_manage_booking:

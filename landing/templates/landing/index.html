@@ -150,10 +150,9 @@
     <div class="landing-section__head">
       <span class="landing-section__label">Менторы</span>
       {% if mentors_personalized %}
-      <h2 class="landing-section__title">Рекомендуем для вас</h2>
+      <h2 class="landing-section__title">Рекомендуем вам</h2>
       <p class="landing-section__desc">
-        Подобрали менторов по вашим интересам
-        {% if mentee_interests %}— {{ mentee_interests|join:", " }}{% if mentee_interests|length >= 5 %}…{% endif %}{% endif %}.
+        Подбор выполнен на основе ваших интересов и целей обучения.
       </p>
       {% else %}
       <h2 class="landing-section__title">Наши менторы</h2>
@@ -169,7 +168,7 @@
     <div class="landing-mentors">
       {% for mentor in mentors %}
       <article class="landing-mentor{% if mentor.recommended %} landing-mentor--recommended{% endif %}">
-        <a href="{% url 'mentor_detail' mentor.slug %}" class="landing-mentor__photo-link">
+        <a href="{% url 'mentor_detail' mentor.slug %}{% if mentor.recommendation_tracking_token %}?rec={{ mentor.recommendation_tracking_token }}{% endif %}" class="landing-mentor__photo-link">
           <div class="landing-mentor__photo">
             {% if mentor.photo_url %}
             <img src="{{ mentor.photo_url }}" alt="{{ mentor.full_name }}" loading="lazy">
@@ -184,7 +183,7 @@
         <div class="landing-mentor__body">
           <div class="landing-mentor__top">
             <h3 class="landing-mentor__name">
-              <a href="{% url 'mentor_detail' mentor.slug %}">{{ mentor.name }}</a>
+              <a href="{% url 'mentor_detail' mentor.slug %}{% if mentor.recommendation_tracking_token %}?rec={{ mentor.recommendation_tracking_token }}{% endif %}">{{ mentor.name }}</a>
             </h3>
             {% if mentor.rating %}
             <span class="landing-mentor__rating">★ {{ mentor.rating|floatformat:1 }}</span>
@@ -195,7 +194,9 @@
             {% if mentor.role %}{{ mentor.role }}{% endif %}{% if mentor.role and mentor.company %} · {% endif %}{% if mentor.company %}{{ mentor.company }}{% endif %}
           </p>
           {% endif %}
-          {% if mentor.matched_skills %}
+          {% if mentor.recommendation_reason %}
+          <p class="landing-mentor__reason">{{ mentor.recommendation_reason }}</p>
+          {% elif mentor.matched_skills %}
           <p class="landing-mentor__match">Совпадение: {{ mentor.matched_skills|join:", " }}</p>
           {% endif %}
           {% if mentor.summary %}
@@ -211,7 +212,7 @@
             {% endif %}
           </div>
           {% endif %}
-          <a href="{% url 'mentor_detail' mentor.slug %}" class="landing-mentor__cta">Подробнее</a>
+          <a href="{% url 'mentor_detail' mentor.slug %}{% if mentor.recommendation_tracking_token %}?rec={{ mentor.recommendation_tracking_token }}{% endif %}" class="landing-mentor__cta">Подробнее</a>
         </div>
       </article>
       {% empty %}

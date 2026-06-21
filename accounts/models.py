@@ -1,4 +1,5 @@
 ﻿import os
+import uuid
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -689,6 +690,103 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'{self.title} → {self.user}'
+
+
+class RecommendationExposure(models.Model):
+    tracking_token = models.UUIDField(
+        'Токен показа',
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+    )
+    mentee = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='recommendation_exposures',
+        verbose_name='Обучающийся',
+    )
+    mentor = models.ForeignKey(
+        MentorProfile,
+        on_delete=models.CASCADE,
+        related_name='recommendation_exposures',
+        verbose_name='Наставник',
+    )
+    rank = models.PositiveSmallIntegerField('Позиция в выдаче')
+    content_score = models.FloatField('Текстовая близость')
+    rating_score = models.FloatField('Вклад рейтинга')
+    experience_score = models.FloatField('Вклад опыта')
+    final_score = models.FloatField('Итоговый балл')
+    algorithm_version = models.CharField('Версия алгоритма', max_length=32, default='tfidf-v1')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Показ рекомендации'
+        verbose_name_plural = 'Показы рекомендаций'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['mentee', '-created_at']),
+            models.Index(fields=['mentor', '-created_at']),
+            models.Index(fields=['-created_at']),
+        ]
+
+    def __str__(self):
+        return f'#{self.rank} {self.mentor_id} → {self.mentee_id}'
+
+
+class RecommendationEvent(models.Model):
+    EVENT_PROFILE_OPENED = 'profile_opened'
+    EVENT_BOOKING_CREATED = 'booking_created'
+    EVENT_ATTENDANCE_CONFIRMED = 'attendance_confirmed'
+    EVENT_BOOKING_CANCELLED = 'booking_cancelled'
+    EVENT_SESSION_COMPLETED = 'session_completed'
+    EVENT_REVIEW_CREATED = 'review_created'
+    EVENT_REPEAT_BOOKING = 'repeat_booking'
+    EVENT_CHOICES = [
+        (EVENT_PROFILE_OPENED, 'Открыт профиль'),
+        (EVENT_BOOKING_CREATED, 'Создана запись'),
+        (EVENT_ATTENDANCE_CONFIRMED, 'Подтверждено участие'),
+        (EVENT_BOOKING_CANCELLED, 'Запись отменена'),
+        (EVENT_SESSION_COMPLETED, 'Сессия завершена'),
+        (EVENT_REVIEW_CREATED, 'Оставлен отзыв'),
+        (EVENT_REPEAT_BOOKING, 'Повторная запись'),
+    ]
+
+    exposure = models.ForeignKey(
+        RecommendationExposure,
+        on_delete=models.CASCADE,
+        related_name='events',
+        verbose_name='Показ рекомендации',
+    )
+    event_type = models.CharField('Тип события', max_length=32, choices=EVENT_CHOICES)
+    booking = models.ForeignKey(
+        SessionBooking,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='recommendation_events',
+        verbose_name='Бронирование',
+    )
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='recommendation_events',
+        verbose_name='Отзыв',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Событие рекомендации'
+        verbose_name_plural = 'События рекомендаций'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['event_type', '-created_at']),
+            models.Index(fields=['exposure', 'event_type']),
+        ]
+
+    def __str__(self):
+        return f'{self.get_event_type_display()} ({self.exposure_id})'
 
 
 def chat_attachment_upload_to(instance, filename):

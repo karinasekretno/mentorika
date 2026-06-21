@@ -609,6 +609,13 @@
   font-weight: 600;
 }
 
+.landing-mentor__reason {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--plasma-colors-secondary);
+}
+
 .landing-mentor__summary {
   margin: 0;
   font-size: var(--plasma-typo-size-s);

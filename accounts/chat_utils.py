@@ -345,6 +345,8 @@ def process_booking_lifecycle_notifications(mentor=None, mentee=None):
             notify_booking_event_in_chat(booking, booking_session_completed_message(booking))
             from accounts.notification_utils import _notify_session_completed
             _notify_session_completed(booking)
+            from accounts.recommendation_events import record_session_completed
+            record_session_completed(booking)
             booking.session_completed_notified = True
             updates.append('session_completed_notified')
             from accounts.review_utils import recalculate_mentor_stats

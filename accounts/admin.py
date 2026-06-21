@@ -8,6 +8,8 @@ from accounts.models import (
     MentorProfile,
     MentorProject,
     MentorSkill,
+    RecommendationEvent,
+    RecommendationExposure,
     Review,
     SessionBooking,
     UserProfile,
@@ -113,3 +115,54 @@ class SessionBookingAdmin(admin.ModelAdmin):
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('mentor', 'mentee', 'rating', 'created_at')
+
+
+class RecommendationEventInline(admin.TabularInline):
+    model = RecommendationEvent
+    extra = 0
+    readonly_fields = ('event_type', 'booking', 'review', 'created_at')
+    can_delete = False
+
+
+@admin.register(RecommendationExposure)
+class RecommendationExposureAdmin(admin.ModelAdmin):
+    list_display = (
+        'tracking_token',
+        'mentee',
+        'mentor',
+        'rank',
+        'final_score',
+        'algorithm_version',
+        'created_at',
+    )
+    list_filter = ('algorithm_version', 'created_at', 'mentor')
+    search_fields = (
+        'tracking_token',
+        'mentee__username',
+        'mentee__email',
+        'mentor__user__username',
+        'mentor__slug',
+    )
+    readonly_fields = (
+        'tracking_token',
+        'mentee',
+        'mentor',
+        'rank',
+        'content_score',
+        'rating_score',
+        'experience_score',
+        'final_score',
+        'algorithm_version',
+        'created_at',
+    )
+    inlines = [RecommendationEventInline]
+    date_hierarchy = 'created_at'
+
+
+@admin.register(RecommendationEvent)
+class RecommendationEventAdmin(admin.ModelAdmin):
+    list_display = ('exposure', 'event_type', 'booking', 'review', 'created_at')
+    list_filter = ('event_type', 'created_at')
+    search_fields = ('exposure__tracking_token',)
+    readonly_fields = ('exposure', 'event_type', 'booking', 'review', 'created_at')
+    raw_id_fields = ('exposure', 'booking', 'review')
